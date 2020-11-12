@@ -37,7 +37,7 @@ nb_path: "01_optimizers.ipynb"
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">GradientDescent</span><span class="p">():</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cost</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="n">gradient</span><span class="p">,</span> 
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x_0</span><span class="p">,</span> <span class="n">cost</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="n">gradient</span><span class="p">,</span> 
                  <span class="n">param_stepsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">param_stepdecay</span><span class="o">=.</span><span class="mi">4</span><span class="p">,</span> <span class="n">param_decay_offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
                  <span class="n">grad_stepsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">grad_stepdecay</span><span class="o">=.</span><span class="mi">2</span><span class="p">,</span> <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="o">=</span><span class="n">cost</span>
@@ -50,12 +50,47 @@ nb_path: "01_optimizers.ipynb"
         <span class="bp">self</span><span class="o">.</span><span class="n">grad_stepdecay</span><span class="o">=</span><span class="n">grad_stepdecay</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">=</span><span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cost_history</span><span class="o">=</span><span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">param_step</span>
-    <span class="k">def</span> <span class="nf">update_params</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">theta_hist</span><span class="o">=</span><span class="p">[</span><span class="n">x_0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="o">=</span><span class="n">x_0</span>
+
+    <span class="k">def</span> <span class="nf">update_params</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gradient_reps</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This performs a single update of the model parameters&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">+=</span><span class="mi">1</span>
-        <span class="c1">### do an update of the parameters</span>
+        
+        <span class="n">c_k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grad_step</span><span class="p">()</span>
+        <span class="c1">### get the gradient</span>
+        <span class="n">ghat</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">c_k</span><span class="p">,</span> <span class="n">gradient_reps</span> <span class="p">)</span>
+        
+        <span class="c1">### determine the proposed step</span>
+        <span class="n">a_k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">param_step</span><span class="p">()</span>
+        <span class="n">step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">a_k</span> <span class="p">,</span><span class="n">t</span><span class="p">)</span>
+        
+
+        <span class="c1">### update the parameters</span>
+        <span class="n">new_theta</span><span class="o">=</span><span class="n">theta</span><span class="o">-</span><span class="n">step</span>
+        <span class="n">new_cost</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="n">new_theta</span><span class="p">)</span>
+        
+        <span class="c1">### evaluate the objective function</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">theta_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_theta</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="o">=</span><span class="n">new_theta</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">cost_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_cost</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">init_grad_reps</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This performs a set number of gradient descent descent iterations, along with some initialization&quot;&quot;&quot;</span>
         <span class="k">pass</span>
-    
+    <span class="k">def</span> <span class="nf">param_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This determines the step size used to update the model parameters.</span>
+<span class="sd">        </span>
+<span class="sd">        a_k= a/(t+A)**alpha&quot;&quot;&quot;</span>
+        <span class="k">return</span>  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_stepsize</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">param_decay_offset</span><span class="p">)</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">param_stepdecay</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">grad_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This determines the step size used to perturb the parameters during the gradient approximation&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grad_stepsize</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">grad_stepdecay</span><span class="p">)</span>
+        
 </pre></div>
 
     </div>
