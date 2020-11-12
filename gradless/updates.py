@@ -27,10 +27,12 @@ class StandardSPSA(UpdateBase):
 # Cell
 class ADAGRAD(UpdateBase):
     def __init__(self):
-        pass
+        self.G_t=None
 
     def evaluate(self,ghat, nu, t=0. ):
-
+        if self.G_t is None:
+            self.G_t=numpy.zeros(ghat.shape)
+        self.G_t+=ghat**2
         return nu*ghat/(self.G_t+self.eps)**.5
 
 # Cell
@@ -78,6 +80,6 @@ class NADAM(UpdateBase):
 
         part_1=(nu/(v_hat**.5+self.eps))
         part_2=self.beta1*m_hat
-        part_3=(1-self.beta1)*g_hat/(1-self.beta1**t)
+        part_3=(1-self.beta1)*ghat/(1-self.beta1**t)
         step=part_1*(part_2+part_3)
         return step

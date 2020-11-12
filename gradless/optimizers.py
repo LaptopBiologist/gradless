@@ -6,9 +6,10 @@ __all__ = ['GradientDescent']
 import numpy
 import scipy
 
+
 # Cell
 class GradientDescent():
-    def __init__(self,x_0, cost, update, gradient=SPSAGradient(),
+    def __init__(self,x_0, cost, update, gradient,
                  param_stepsize=1, param_stepdecay=.4, param_decay_offset=0,
                  grad_stepsize=1, grad_stepdecay=.2, ):
         self.cost=cost
