@@ -42,8 +42,8 @@ class ADAM(UpdateBase):
         self.beta2=beta2
         self.eps=eps
 
-        self.m_t=[]
-        self.v_t=[]
+        self.m_t=[0.]
+        self.v_t=[0.]
     def evaluate(self,ghat, nu, t ):
         #Update the gradient histories
         self.m_t.append(self.beta1*self.m_t[-1]+(1-self.beta1)*ghat)
@@ -63,8 +63,8 @@ class NADAM(UpdateBase):
         self.beta2=beta2
         self.eps=eps
 
-        self.m_t=[]
-        self.v_t=[]
+        self.m_t=[0.]
+        self.v_t=[0.]
     def evaluate(self,ghat, nu, t ):
         #Update the gradient histories
         self.m_t.append(self.beta1*self.m_t[-1]+(1-self.beta1)*ghat)
@@ -72,10 +72,10 @@ class NADAM(UpdateBase):
 
 
         if t>=2:
-            m_hat=self.m_t/(1-self.beta1**(t-1))
+            m_hat=self.m_t[-1]/(1-self.beta1**(t-1))
         else:
             m_hat=0.
-        v_hat=self.v_t/(1-self.beta2**t)
+        v_hat=self.v_t[-1]/(1-self.beta2**t)
 
 
         part_1=(nu/(v_hat**.5+self.eps))

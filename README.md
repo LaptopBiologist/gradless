@@ -1,10 +1,12 @@
-# Project name here
-> Summary description here.
+# gradless
+
 
 
 This file will become your README and also the index of your documentation.
 
 ## Install
+
+This is still in development
 
 `pip install your_project_name`
 
@@ -12,7 +14,7 @@ This file will become your README and also the index of your documentation.
 
 Fill me in please! Don't forget code examples:
 
-```
+```python
 1+1
 ```
 

@@ -5,11 +5,12 @@ __all__ = ['GradientDescent']
 # Cell
 import numpy
 import scipy
+from .gradient import SPSAGradient
 
 
 # Cell
 class GradientDescent():
-    def __init__(self,x_0, cost, update, gradient,
+    def __init__(self,x_0, cost, update, gradient=SPSAGradient(),
                  param_stepsize=1, param_stepdecay=.4, param_decay_offset=0,
                  grad_stepsize=1, grad_stepdecay=.2, ):
         self.cost=cost
@@ -21,28 +22,34 @@ class GradientDescent():
         self.grad_stepsize=grad_stepsize
         self.grad_stepdecay=grad_stepdecay
         self.t=0
-        self.cost_history=[]
+        self.cost_history=[cost.evaluate(x_0)]
 
         self.theta_hist=[x_0]
         self.theta=x_0
 
-    def update_params (self, gradient_reps=1):
+    def update_params (self, gradient_reps=1,block_val=numpy.inf):
         """This performs a single update of the model parameters"""
         self.t+=1
 
         c_k=self.grad_step()
         ### get the gradient
-        ghat= self.gradient.evaluate(self.cost, self.theta, c_k, gradient_reps )
+        ghat= self.gradient.evaluate(self.cost, self.theta, c_k, gradient_reps=gradient_reps )
 
         ### determine the proposed step
         a_k=self.param_step()
-        step=self.update.evaluate(ghat, a_k ,t)
+        step=self.update.evaluate(ghat, a_k ,self.t)
 
 
         ### update the parameters
-        new_theta=theta-step
+        new_theta=self.theta-step
         new_cost=self.cost.evaluate(new_theta)
 
+        if new_cost>block_val*self.cost_history[-1]:
+            self.t-=1
+            return()
+        if numpy.isnan(new_cost):
+            self.t-=1
+            return()
         ### evaluate the objective function
 
         self.theta_hist.append(new_theta)

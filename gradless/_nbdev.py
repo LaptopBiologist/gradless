@@ -9,11 +9,14 @@ index = {"GradientDescent": "01_optimizers.ipynb",
          "ADAM": "02_updates.ipynb",
          "NADAM": "02_updates.ipynb",
          "CostFunctionBase": "03_costs.ipynb",
-         "CustomCost": "03_costs.ipynb"}
+         "CustomCost": "03_costs.ipynb",
+         "ELBO": "03_costs.ipynb",
+         "SPSAGradient": "04_gradient.ipynb"}
 
 modules = ["optimizers.py",
            "updates.py",
-           "costs.py"]
+           "costs.py",
+           "gradient.py"]
 
 doc_url = "https://LaptopBiologist.github.io/gradless/"
 

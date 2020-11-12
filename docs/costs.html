@@ -293,6 +293,116 @@ $$y=2x+5+\epsilon$$
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="A-cost-function-for-variational-inference">A cost function for variational inference<a class="anchor-link" href="#A-cost-function-for-variational-inference"> </a></h3><p>{% raw %}
+$$ELBO(\theta, X) = \int_\zeta [ log P(\zeta, X) - log Q(\zeta; \mu, \sigma) ]$$
+{% endraw %}</p>
+<p>The integral is often avoided through the use of Monte Carlo simulations</p>
+<p>{% raw %}
+$$z \sim Normal (0,1)$$
+{% endraw %}
+{% raw %}
+$$\zeta = \mu + z \sigma$$
+{% endraw %}
+{% raw %}
+$$ELBO(\theta, X) = log P(\zeta, X) - log Q(\zeta; \mu, \sigma) $$
+{% endraw %}</p>
+<p>When more typical stochastic gradient descent is employed, the gradient is usually evaluated analytically or through automatic differentiation <em>given a particular value of z</em> which drawn from a unit normal distribution of iteration of gradient descent.</p>
+<p>In general, optimizing this function based on exact gradient computations would be preferable (e.g. with PyMC3 or JAX), but if computing the evidence term ($log P (\zeta,X)$) requires simulations, the exact gradients will not be available. The noise in the objective function now comes from two sources:</p>
+<ol>
+<li>The replacing the integral with Monte Carlo sampling</li>
+<li>Using simulations to estimate the model's likelihood.</li>
+</ol>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">norm_froz</span><span class="o">=</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span><span class="p">,[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">norm_froz</span><span class="o">.</span><span class="n">rvs</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([-0.05228358, -1.62811463, -0.21606761, -0.79423017,  0.85174974,
+        0.46058641,  0.17291183, -1.33673418,  3.46215729, -2.00400602])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="ELBO" class="doc_header"><code>class</code> <code>ELBO</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/costs.py#L44" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ELBO</code>(<strong><code>evidence</code></strong>, <strong><code>data</code></strong>, <strong><code>param_num</code></strong>) :: <a href="/gradless/costs.html#CostFunctionBase"><code>CostFunctionBase</code></a></p>
+</blockquote>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">elbo</span><span class="o">=</span><span class="n">ELBO</span><span class="p">(</span><span class="n">MSE</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
 </div>
  
 
