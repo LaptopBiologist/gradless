@@ -21,6 +21,9 @@ entries:
     - output: web,pdf
       title: costs
       url: costs.html
+    - output: web,pdf
+      title: gradient
+      url: gradient.html
     output: web
     title: gradless
   output: web

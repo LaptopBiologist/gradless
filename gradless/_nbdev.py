@@ -2,9 +2,18 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {}
+index = {"GradientDescent": "01_optimizers.ipynb",
+         "UpdateBase": "02_updates.ipynb",
+         "StandardSPSA": "02_updates.ipynb",
+         "ADAGRAD": "02_updates.ipynb",
+         "ADAM": "02_updates.ipynb",
+         "NADAM": "02_updates.ipynb",
+         "CostFunctionBase": "03_costs.ipynb",
+         "CustomCost": "03_costs.ipynb"}
 
-modules = []
+modules = ["optimizers.py",
+           "updates.py",
+           "costs.py"]
 
 doc_url = "https://LaptopBiologist.github.io/gradless/"
 

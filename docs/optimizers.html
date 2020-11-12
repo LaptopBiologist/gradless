@@ -37,7 +37,7 @@ nb_path: "01_optimizers.ipynb"
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">GradientDescent</span><span class="p">():</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x_0</span><span class="p">,</span> <span class="n">cost</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="n">gradient</span><span class="p">,</span> 
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x_0</span><span class="p">,</span> <span class="n">cost</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="n">gradient</span><span class="o">=</span><span class="n">SPSAGradient</span><span class="p">(),</span> 
                  <span class="n">param_stepsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">param_stepdecay</span><span class="o">=.</span><span class="mi">4</span><span class="p">,</span> <span class="n">param_decay_offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
                  <span class="n">grad_stepsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">grad_stepdecay</span><span class="o">=.</span><span class="mi">2</span><span class="p">,</span> <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="o">=</span><span class="n">cost</span>
@@ -60,16 +60,16 @@ nb_path: "01_optimizers.ipynb"
         
         <span class="n">c_k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grad_step</span><span class="p">()</span>
         <span class="c1">### get the gradient</span>
-        <span class="n">ghat</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">c_k</span><span class="p">,</span> <span class="n">gradient_reps</span> <span class="p">)</span>
+        <span class="n">ghat</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gradient</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">c_k</span><span class="p">,</span> <span class="n">gradient_reps</span> <span class="p">)</span>
         
         <span class="c1">### determine the proposed step</span>
         <span class="n">a_k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">param_step</span><span class="p">()</span>
-        <span class="n">step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">a_k</span> <span class="p">,</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">ghat</span><span class="p">,</span> <span class="n">a_k</span> <span class="p">,</span><span class="n">t</span><span class="p">)</span>
         
 
         <span class="c1">### update the parameters</span>
         <span class="n">new_theta</span><span class="o">=</span><span class="n">theta</span><span class="o">-</span><span class="n">step</span>
-        <span class="n">new_cost</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="n">new_theta</span><span class="p">)</span>
+        <span class="n">new_cost</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">new_theta</span><span class="p">)</span>
         
         <span class="c1">### evaluate the objective function</span>
         

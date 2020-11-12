@@ -4,6 +4,7 @@
     "gradless": "core.html",
     "optimizers": "optimizers.html",
     "updates": "updates.html",
-    "costs": "costs.html"
+    "costs": "costs.html",
+    "gradient": "gradient.html"
   }
 }
