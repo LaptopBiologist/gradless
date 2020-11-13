@@ -12,33 +12,45 @@ from .gradient import SPSAGradient
 class GradientDescent():
     def __init__(self,x_0, cost, update, gradient=SPSAGradient(),
                  param_stepsize=1, param_stepdecay=.4, param_decay_offset=0,
-                 grad_stepsize=1, grad_stepdecay=.2, ):
+                 grad_stepsize=1, grad_stepdecay=.2,
+                seed=None):
+        if seed is not None:
+            assert type(seed) is int
+            numpy.random.seed(seed)
         self.cost=cost
         self.update=update
         self.gradient=gradient
+
+        #if the gradient was passed without cost being defined, set the cost
+        if self.gradient.cost is None:
+            self.gradient.set_cost(self.cost)
+
         self.param_stepsize=param_stepsize
         self.param_stepdecay=param_stepdecay
         self.param_decay_offset=param_decay_offset
         self.grad_stepsize=grad_stepsize
         self.grad_stepdecay=grad_stepdecay
-        self.t=0
+        self.t=0.
         self.cost_history=[cost.evaluate(x_0)]
 
         self.theta_hist=[x_0]
         self.theta=x_0
 
-    def update_params (self, gradient_reps=1,block_val=numpy.inf):
+    def update_params (self, gradient_reps=1,block_val=numpy.inf, update_rvs=False, max_step=None):
         """This performs a single update of the model parameters"""
         self.t+=1
 
         c_k=self.grad_step()
         ### get the gradient
-        ghat= self.gradient.evaluate(self.cost, self.theta, c_k, gradient_reps=gradient_reps )
+        ghat= self.gradient.evaluate( self.theta, c_k, gradient_reps=gradient_reps, update_rvs=update_rvs )
 
         ### determine the proposed step
         a_k=self.param_step()
         step=self.update.evaluate(ghat, a_k ,self.t)
 
+        if max_step is not None:
+            bad_ind=numpy.abs(step)>max_step
+            step[bad_ind]=numpy.sign(step[bad_ind])*max_step
 
         ### update the parameters
         new_theta=self.theta-step
