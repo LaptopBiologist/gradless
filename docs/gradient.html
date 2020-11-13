@@ -36,6 +36,21 @@ nb_path: "04_gradient.ipynb"
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-gradient-base-class">The gradient base class<a class="anchor-link" href="#The-gradient-base-class"> </a></h3><p><code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> must be passed an object with a method called <code>.evaluate(theta)</code>. This should store as an attribute the cost function to be evaluated and take the following inputs:</p>
+<ol>
+<li>theta - A 1-D numpy array of model parameters</li>
+<li>c_k - A step size that may be used in the gradient evaluation</li>
+<li>gradient_reps - The number of times to evaluate the gradient (multiple evaluations will be averaged)</li>
+<li>update_rvs - Whether regenerated random variables stored in the cost function after each gradient evaluation</li>
+</ol>
+<p>It should return a vector of the same length as <code>theta</code> containing an estimate of the cost function's gradient at <code>theta</code>.</p>
+<p>Any approach to gradient evaluation will require the first argument, <code>theta</code>. The latter three are only necessary when using an approximation of the gradient.</p>
+
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -47,8 +62,10 @@ nb_path: "04_gradient.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="SPSAGradient" class="doc_header"><code>class</code> <code>SPSAGradient</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/gradient.py#L11" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>SPSAGradient</code>(<strong><code>param_subsets</code></strong>=<em><code>None</code></em>)</p>
+<h2 id="GradientBase" class="doc_header"><code>class</code> <code>GradientBase</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/gradient.py#L12" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>GradientBase</code>() :: <code>ABC</code></p>
 </blockquote>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
 
 </div>
 
@@ -67,6 +84,81 @@ nb_path: "04_gradient.ipynb"
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="[`SPSAGradient`](/gradless/gradient.html#SPSAGradient):-Approximating-the-gradient-with-SPSA"><code>[`SPSAGradient`](/gradless/gradient.html#SPSAGradient)</code>: Approximating the gradient with SPSA<a class="anchor-link" href="#[`SPSAGradient`](/gradless/gradient.html#SPSAGradient):-Approximating-the-gradient-with-SPSA"> </a></h3><p>The <code>gradient.SPSAGradient</code> class is used by <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> to approximate the gradient of an objective function, which can then be used to update model parameters.</p>
+<p>This takes two arguments, both of which are optional:</p>
+<ol>
+<li><p><code>param_subsets</code> (optional) - A list or array of labels that defines groups of parameters. For example, [0,0,0,1,1,1] defines the first three model parameters as group 0 and the last three as belong to group 1.</p>
+</li>
+<li><p><code>cost</code> (optional) - The cost function used in the gradient evaluation. When passing an instance of the <code>[`SPSAGradient`](/gradless/gradient.html#SPSAGradient)</code> class to the <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> optimizer, this should be left undefined. The <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> object will automatically add the cost function being optimized to the <code>[`SPSAGradient`](/gradless/gradient.html#SPSAGradient)</code> if its cost function has not been defined.</p>
+</li>
+</ol>
+<p>(Note: It might make sense to move this to the cost class. The <code>cost</code> class might be better redefined as a <code>model</code> class)</p>
+<h4 id="Perturbing-subset-of-parameters">Perturbing subset of parameters<a class="anchor-link" href="#Perturbing-subset-of-parameters"> </a></h4><p>In some models, it might be desirable to evaluate the gradient separately for different subsets of parameters. For example, in variational inference, the means of the posterior approximation have a much stronger impact on the loss function than the standard deviations do. In that case, perturbing all parameters at once is likely to pick up the impact of perturbing the means on the gradient, but perhaps not the standard deviations.</p>
+<p>The <code>param_labels</code> option permits to the gradient approximation to be evaluated separately for subsets of parameters. If, for example. <code>param_labels=[0,0,0,1,1,1]</code>, then the gradient will be approximated in two steps. The gradient will be estimated first for the three first parameters, perturbing them while holding the other parameters constant. Then the parameters labelled <code>1</code> will be perturbed, while all others are held constant. The cost of doing this is the number of cost function evaluations increases from $2$ to $2n$, where is $n$ number of parameter subset to be evaluated separately.</p>
+<h4 id="Averaging-multiple-gradient-approximations">Averaging multiple gradient approximations<a class="anchor-link" href="#Averaging-multiple-gradient-approximations"> </a></h4><p>By default calling <code>evaluate</code> approximates the gradient from a single forward and backward perturbation. The argument <code>gradient_reps</code> can instead be set to an integer value greater than 1, to instead return the average of multiple gradient evaluations. If <code>gradient_reps</code> is set to $r$, <code>evaluate</code> will return the average of $r$ gradient approximations. This may lead to faster convergences.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="SPSAGradient" class="doc_header"><code>class</code> <code>SPSAGradient</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/gradient.py#L19" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>SPSAGradient</code>(<strong><code>param_subsets</code></strong>=<em><code>None</code></em>, <strong><code>cost</code></strong>=<em><code>None</code></em>) :: <a href="/gradless/gradient.html#GradientBase"><code>GradientBase</code></a></p>
+</blockquote>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test</span><span class="o">=</span><span class="n">SPSAGradient</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Example-usage">Example usage<a class="anchor-link" href="#Example-usage"> </a></h3><p>In general</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Testing-the-gradient">Testing the gradient<a class="anchor-link" href="#Testing-the-gradient"> </a></h3>
