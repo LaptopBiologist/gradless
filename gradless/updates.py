@@ -26,7 +26,8 @@ class StandardSPSA(UpdateBase):
 
 # Cell
 class ADAGRAD(UpdateBase):
-    def __init__(self):
+    def __init__(self, eps=1e-8):
+        self.eps=eps
         self.G_t=None
 
     def evaluate(self,ghat, nu, t=0. ):

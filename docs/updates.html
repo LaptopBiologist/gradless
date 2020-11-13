@@ -69,50 +69,21 @@ inheritance.</p>
 </div>
     {% endraw %}
 
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_step</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">nu</span><span class="p">,</span> <span class="n">m_t</span><span class="p">,</span><span class="n">v_t</span><span class="p">,</span><span class="n">G_t</span><span class="p">,</span> <span class="n">beta1</span><span class="p">,</span> <span class="n">beta2</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">epsilon</span> <span class="p">):</span>
-    <span class="n">m_hat</span><span class="o">=</span><span class="n">m_t</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">beta1</span><span class="o">**</span><span class="n">t</span><span class="p">)</span>
-    <span class="n">v_hat</span><span class="o">=</span><span class="n">v_t</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">beta2</span><span class="o">**</span><span class="n">t</span><span class="p">)</span>
-    
-    <span class="n">theta_new</span><span class="o">=</span><span class="n">nu</span><span class="o">*</span><span class="n">m_hat</span><span class="o">/</span><span class="p">(</span><span class="n">v_hat</span><span class="o">**.</span><span class="mi">5</span><span class="o">+</span><span class="n">epsilon</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">theta_new</span>
-
-<span class="k">def</span> <span class="nf">get_step_adagrad</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">nu</span><span class="p">,</span> <span class="n">m_t</span><span class="p">,</span><span class="n">v_t</span><span class="p">,</span><span class="n">G_t</span><span class="p">,</span> <span class="n">beta1</span><span class="p">,</span> <span class="n">beta2</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">epsilon</span> <span class="p">):</span>
-
-    <span class="n">theta_new</span><span class="o">=</span><span class="n">m_t</span><span class="o">*</span><span class="n">nu</span><span class="o">/</span><span class="p">(</span><span class="n">G_t</span><span class="o">+</span><span class="n">epsilon</span><span class="p">)</span><span class="o">**.</span><span class="mi">5</span>
-    <span class="k">return</span> <span class="n">theta_new</span>
-
-<span class="k">def</span> <span class="nf">get_step_NADAM</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">nu</span><span class="p">,</span> <span class="n">m_t</span><span class="p">,</span><span class="n">v_t</span><span class="p">,</span><span class="n">g_t</span><span class="p">,</span> <span class="n">beta1</span><span class="p">,</span> <span class="n">beta2</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">epsilon</span> <span class="p">):</span>
-    <span class="k">if</span> <span class="n">t</span><span class="o">&gt;=</span><span class="mi">2</span><span class="p">:</span>
-        <span class="n">m_hat</span><span class="o">=</span><span class="n">m_t</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">beta1</span><span class="o">**</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">m_hat</span><span class="o">=</span><span class="mf">0.</span>
-    <span class="n">v_hat</span><span class="o">=</span><span class="n">v_t</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">beta2</span><span class="o">**</span><span class="n">t</span><span class="p">)</span>
-
-    
-    <span class="n">part_1</span><span class="o">=</span><span class="p">(</span><span class="n">nu</span><span class="o">/</span><span class="p">(</span><span class="n">v_hat</span><span class="o">**.</span><span class="mi">5</span><span class="o">+</span><span class="n">epsilon</span><span class="p">))</span>
-    <span class="n">part_2</span><span class="o">=</span><span class="n">beta1</span><span class="o">*</span><span class="n">m_hat</span>
-    <span class="n">part_3</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">beta1</span><span class="p">)</span><span class="o">*</span><span class="n">g_t</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">beta1</span><span class="o">**</span><span class="n">t</span><span class="p">)</span>
-    <span class="n">theta_new</span><span class="o">=</span><span class="n">part_1</span><span class="o">*</span><span class="p">(</span><span class="n">part_2</span><span class="o">+</span><span class="n">part_3</span><span class="p">)</span> 
-    <span class="k">return</span> <span class="n">theta_new</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="The-standard-SPSA-step">The standard SPSA step<a class="anchor-link" href="#The-standard-SPSA-step"> </a></h3>
+<p>(Note: I may want to do some restructuring and move the parameter stepsize, decay to the update rules)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-standard-SPSA-step">The standard SPSA step<a class="anchor-link" href="#The-standard-SPSA-step"> </a></h3><p>The default step used by Spall's classic SPSA algorithm is</p>
+<p>{% raw %}
+$$\theta_{t+1}=\theta_t - a_t \hat{g}$$
+{% endraw %}</p>
+<p>where $\hat{g}$ is the gradient estimate and $a_t$ is the learning rate at iteration $t$.</p>
+
 </div>
 </div>
 </div>
@@ -151,7 +122,20 @@ inheritance.</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="The-ADAGRAD-step-update">The ADAGRAD step update<a class="anchor-link" href="#The-ADAGRAD-step-update"> </a></h3>
+<h3 id="The-ADAGRAD-step-update">The ADAGRAD step update<a class="anchor-link" href="#The-ADAGRAD-step-update"> </a></h3><p>ADAGRAD</p>
+<p>The update rule is
+{% raw %}
+$$G_0=0$$
+{% endraw %}
+{% raw %}
+$$G_t=G_{t-1}+(\hat{g}_t)^2$$
+{% endraw %}
+{% raw %}
+$$\theta_{t+1}=\theta_t - a_t \frac{\hat{g}_t}{\sqrt{G_t}+\epsilon} $$
+{% endraw %}</p>
+<p>This step update requires a small term <code>eps</code> be defined to prevent divide be zero errors. By default this is set to <code>1e-8</code></p>
+<p>Note that typically, ADAGRAD is employed with a fixed learning rate. By default, however, <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> uses a decreasing serir</p>
+
 </div>
 </div>
 </div>
@@ -166,7 +150,7 @@ inheritance.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="ADAGRAD" class="doc_header"><code>class</code> <code>ADAGRAD</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L28" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ADAGRAD</code>() :: <a href="/gradless/updates.html#UpdateBase"><code>UpdateBase</code></a></p>
+<h2 id="ADAGRAD" class="doc_header"><code>class</code> <code>ADAGRAD</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L28" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ADAGRAD</code>(<strong><code>eps</code></strong>=<em><code>1e-08</code></em>) :: <a href="/gradless/updates.html#UpdateBase"><code>UpdateBase</code></a></p>
 </blockquote>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
@@ -205,7 +189,7 @@ inheritance.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="ADAM" class="doc_header"><code>class</code> <code>ADAM</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L39" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ADAM</code>(<strong><code>beta1</code></strong>=<em><code>0.9</code></em>, <strong><code>beta2</code></strong>=<em><code>0.999</code></em>, <strong><code>eps</code></strong>=<em><code>1e-08</code></em>) :: <a href="/gradless/updates.html#UpdateBase"><code>UpdateBase</code></a></p>
+<h2 id="ADAM" class="doc_header"><code>class</code> <code>ADAM</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L40" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ADAM</code>(<strong><code>beta1</code></strong>=<em><code>0.9</code></em>, <strong><code>beta2</code></strong>=<em><code>0.999</code></em>, <strong><code>eps</code></strong>=<em><code>1e-08</code></em>) :: <a href="/gradless/updates.html#UpdateBase"><code>UpdateBase</code></a></p>
 </blockquote>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
@@ -244,7 +228,7 @@ inheritance.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="NADAM" class="doc_header"><code>class</code> <code>NADAM</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L60" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>NADAM</code>(<strong><code>beta1</code></strong>=<em><code>0.9</code></em>, <strong><code>beta2</code></strong>=<em><code>0.999</code></em>, <strong><code>eps</code></strong>=<em><code>1e-08</code></em>) :: <a href="/gradless/updates.html#UpdateBase"><code>UpdateBase</code></a></p>
+<h2 id="NADAM" class="doc_header"><code>class</code> <code>NADAM</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L61" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>NADAM</code>(<strong><code>beta1</code></strong>=<em><code>0.9</code></em>, <strong><code>beta2</code></strong>=<em><code>0.999</code></em>, <strong><code>eps</code></strong>=<em><code>1e-08</code></em>) :: <a href="/gradless/updates.html#UpdateBase"><code>UpdateBase</code></a></p>
 </blockquote>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
