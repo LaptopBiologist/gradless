@@ -10,6 +10,7 @@ from abc import ABC, abstractmethod
 # Cell
 
 class UpdateBase(ABC):
+    """A helper class for constructing update rules"""
     @abstractmethod
     #This is the workhorse of the class
     def evaluate(self): pass
@@ -17,6 +18,7 @@ class UpdateBase(ABC):
 
 # Cell
 class StandardSPSA(UpdateBase):
+    """A standard gradient descent update."""
     def __init__(self):
         pass
 

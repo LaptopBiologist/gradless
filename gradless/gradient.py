@@ -10,6 +10,8 @@ from abc import ABC, abstractmethod
 # Cell
 
 class GradientBase(ABC):
+    """A helper class that provides a standard means to create
+    classes to provide gradients or their approximations to GradientDescent."""
     @abstractmethod
     #This is the workhorse of the class
     def evaluate(self): pass
@@ -17,6 +19,7 @@ class GradientBase(ABC):
 
 # Cell
 class SPSAGradient(GradientBase):
+    """A class for computing the SPSA gradient estimate."""
     def __init__(self, param_subsets=None, cost=None):
         self.cost=cost
         self.param_subsets=param_subsets
@@ -28,6 +31,17 @@ class SPSAGradient(GradientBase):
         self.cost=cost
 
     def evaluate(self, theta, c_k, gradient_reps=1, update_rvs=False):
+        """Inputs
+        1. theta - A 1-D numpy array of model parameters
+        2. c_k - A step size that may be used in the gradient evaluation
+        3. gradient_reps - The number of times to evaluate the gradient
+            (multiple evaluations will be averaged)
+        4. update_rvs - Whether regenerated random variables stored in
+            the cost function after each gradient evaluation
+
+            Returns an array gradient estimates the same size as theta
+
+        """
 
 #         assert len(theta)==len(self.)
         #If no subsets were defined, then now we'll define all model parameters as one set
@@ -43,7 +57,9 @@ class SPSAGradient(GradientBase):
                 self.cost.sample_rvs()
             ghat=numpy.zeros(theta.shape)
             for s in self.subsets:
+
                 param_filter=self.param_subsets==s
+
                 ghat+=self.SPSA( theta, c_k, param_filter)
             grad_list.append(ghat)
         if gradient_reps==1:

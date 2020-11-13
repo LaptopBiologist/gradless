@@ -4,7 +4,8 @@
     "gradless": "core.html",
     "optimizers": "optimizers.html",
     "updates": "updates.html",
-    "costs": "costs.html",
-    "gradient": "gradient.html"
+    "Models: Wrapping objective functions and data ": "models.html",
+    "gradient: Approximating the gradient": "gradient.html",
+    "Title": "examples.html"
   }
 }

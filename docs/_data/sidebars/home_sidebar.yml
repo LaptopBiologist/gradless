@@ -19,11 +19,14 @@ entries:
       title: updates
       url: updates.html
     - output: web,pdf
-      title: costs
-      url: costs.html
+      title: 'Models: Wrapping objective functions and data '
+      url: models.html
     - output: web,pdf
-      title: gradient
+      title: 'gradient: Approximating the gradient'
       url: gradient.html
+    - output: web,pdf
+      title: Title
+      url: examples.html
     output: web
     title: gradless
   output: web

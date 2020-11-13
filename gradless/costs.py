@@ -11,6 +11,8 @@ from abc import ABC, abstractmethod
 
 # Cell
 class ModelBase(ABC):
+    """A helper class that provides a standard means to create
+    classes to store models used by GradientDescent."""
 
 
     RV=None
@@ -31,7 +33,18 @@ class ModelBase(ABC):
 
 # Cell
 class Model(ModelBase):
-    def __init__(self, cost, data, RV=None, update_rvs=False):
+    """A class for passing objective functions and data to the GradientDescent
+    optimizer
+
+    Inputs:
+
+    cost - the objective function to be minimized
+    data - the data to which the model will be fit (optional)
+    RV - An object with a .rvs() method to generate random variables
+        for the cost function
+    update_rvs: True/False call RV.rvs() before each gradient evaluation
+    """
+    def __init__(self, cost, data=None, RV=None, update_rvs=False):
 
         self.cost=cost
         self.data=data
@@ -53,7 +66,6 @@ class Model(ModelBase):
             return self.cost(theta, self.data, self.z)
 
 # Cell
-
 
 class ELBO(ModelBase):
     def __init__(self, evidence, data, param_num, log=True, update_rvs=True):

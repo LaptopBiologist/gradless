@@ -8,9 +8,10 @@ index = {"GradientDescent": "01_optimizers.ipynb",
          "ADAGRAD": "02_updates.ipynb",
          "ADAM": "02_updates.ipynb",
          "NADAM": "02_updates.ipynb",
-         "CostFunctionBase": "03_costs.ipynb",
-         "CustomCost": "03_costs.ipynb",
-         "ELBO": "03_costs.ipynb",
+         "ModelBase": "03_models.ipynb",
+         "Model": "03_models.ipynb",
+         "ELBO": "03_models.ipynb",
+         "GradientBase": "04_gradient.ipynb",
          "SPSAGradient": "04_gradient.ipynb"}
 
 modules = ["optimizers.py",
