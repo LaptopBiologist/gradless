@@ -3,9 +3,8 @@
     "Overview": "/",
     "gradless": "core.html",
     "optimizers": "optimizers.html",
-    "updates": "updates.html",
+    "updates: Strategies for updating parameters": "updates.html",
     "Models: Wrapping objective functions and data ": "models.html",
-    "gradient: Approximating the gradient": "gradient.html",
-    "Title": "examples.html"
+    "gradient: Approximating the gradient": "gradient.html"
   }
 }

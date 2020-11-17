@@ -16,7 +16,7 @@ entries:
       title: optimizers
       url: optimizers.html
     - output: web,pdf
-      title: updates
+      title: 'updates: Strategies for updating parameters'
       url: updates.html
     - output: web,pdf
       title: 'Models: Wrapping objective functions and data '
@@ -24,9 +24,6 @@ entries:
     - output: web,pdf
       title: 'gradient: Approximating the gradient'
       url: gradient.html
-    - output: web,pdf
-      title: Title
-      url: examples.html
     output: web
     title: gradless
   output: web
