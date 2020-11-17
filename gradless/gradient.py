@@ -65,6 +65,9 @@ class SPSAGradient(GradientBase):
         if gradient_reps==1:
             return grad_list[0]
         else: #We need to average
+#             print (grad_list)
+#             print ( numpy.mean(grad_list,0))
+#             print (jabber)
             return numpy.mean(grad_list,0)
 
     def SPSA(self, theta, ck, param_ind):
@@ -80,7 +83,7 @@ class SPSAGradient(GradientBase):
         """
         #Draw the perturbation
 
-        delta=2*scipy.stats.bernoulli.rvs(p=.5,size=theta.shape[0])-1
+        delta=2.*scipy.stats.bernoulli.rvs(p=.5,size=theta.shape[0])-1.
         #hold delta constant for the parameters not under consideration
         delta[~param_ind]=0.
         #Perturb the parameters forwards and backwards
