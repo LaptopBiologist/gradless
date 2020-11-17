@@ -1,6 +1,6 @@
 ---
 
-title: updates
+title: updates: Strategies for updating parameters
 
 
 keywords: fastai
@@ -29,6 +29,14 @@ nb_path: "02_updates.ipynb"
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The various update rules that can be used by the <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> optimizer are collected here. <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> expects update rules to by instances of a class with an <code>evaluate</code> method that takes as input a gradient estimate, a learning rate, and the current iteration (Comment: this seems like a suboptimal requirement), and returns a proposed parameter update. The reason update rules are required to be structured as classes is so that they can store any information they need to update the parameters. All update rules should return a numpy array of floats to be used as a step to update the model parameters.</p>
+<p>Many of the update steps are implemented based on <a href="https://arxiv.org/abs/1609.04747">this review</a></p>
+
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -49,8 +57,7 @@ nb_path: "02_updates.ipynb"
 <div class="output_markdown rendered_html output_subarea ">
 <h2 id="UpdateBase" class="doc_header"><code>class</code> <code>UpdateBase</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L12" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>UpdateBase</code>() :: <code>ABC</code></p>
 </blockquote>
-<p>Helper class that provides a standard way to create an ABC using
-inheritance.</p>
+<p>A helper class for constructing update rules</p>
 
 </div>
 
@@ -98,10 +105,9 @@ $$\theta_{t+1}=\theta_t - a_t \hat{g}$$
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="StandardSPSA" class="doc_header"><code>class</code> <code>StandardSPSA</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L19" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>StandardSPSA</code>() :: <a href="/gradless/updates.html#UpdateBase"><code>UpdateBase</code></a></p>
+<h2 id="StandardSPSA" class="doc_header"><code>class</code> <code>StandardSPSA</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L20" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>StandardSPSA</code>() :: <a href="/gradless/updates.html#UpdateBase"><code>UpdateBase</code></a></p>
 </blockquote>
-<p>Helper class that provides a standard way to create an ABC using
-inheritance.</p>
+<p>A standard gradient descent update.</p>
 
 </div>
 
@@ -150,10 +156,9 @@ $$\theta_{t+1}=\theta_t - a_t \frac{\hat{g}_t}{\sqrt{G_t}+\epsilon} $$
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="ADAGRAD" class="doc_header"><code>class</code> <code>ADAGRAD</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L28" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ADAGRAD</code>(<strong><code>eps</code></strong>=<em><code>1e-08</code></em>) :: <a href="/gradless/updates.html#UpdateBase"><code>UpdateBase</code></a></p>
+<h2 id="ADAGRAD" class="doc_header"><code>class</code> <code>ADAGRAD</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L30" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ADAGRAD</code>(<strong><code>eps</code></strong>=<em><code>1e-08</code></em>) :: <a href="/gradless/updates.html#UpdateBase"><code>UpdateBase</code></a></p>
 </blockquote>
-<p>Helper class that provides a standard way to create an ABC using
-inheritance.</p>
+<p>The Adagrad gradient descent update.</p>
 
 </div>
 
@@ -196,10 +201,9 @@ inheritance.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="ADAM" class="doc_header"><code>class</code> <code>ADAM</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L40" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ADAM</code>(<strong><code>beta1</code></strong>=<em><code>0.9</code></em>, <strong><code>beta2</code></strong>=<em><code>0.999</code></em>, <strong><code>eps</code></strong>=<em><code>1e-08</code></em>) :: <a href="/gradless/updates.html#UpdateBase"><code>UpdateBase</code></a></p>
+<h2 id="ADAM" class="doc_header"><code>class</code> <code>ADAM</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L43" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ADAM</code>(<strong><code>beta1</code></strong>=<em><code>0.9</code></em>, <strong><code>beta2</code></strong>=<em><code>0.999</code></em>, <strong><code>eps</code></strong>=<em><code>1e-08</code></em>) :: <a href="/gradless/updates.html#UpdateBase"><code>UpdateBase</code></a></p>
 </blockquote>
-<p>Helper class that provides a standard way to create an ABC using
-inheritance.</p>
+<p>A helper class for constructing update rules</p>
 
 </div>
 
@@ -235,10 +239,9 @@ inheritance.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="NADAM" class="doc_header"><code>class</code> <code>NADAM</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L61" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>NADAM</code>(<strong><code>beta1</code></strong>=<em><code>0.9</code></em>, <strong><code>beta2</code></strong>=<em><code>0.999</code></em>, <strong><code>eps</code></strong>=<em><code>1e-08</code></em>) :: <a href="/gradless/updates.html#UpdateBase"><code>UpdateBase</code></a></p>
+<h2 id="NADAM" class="doc_header"><code>class</code> <code>NADAM</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/updates.py#L64" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>NADAM</code>(<strong><code>beta1</code></strong>=<em><code>0.9</code></em>, <strong><code>beta2</code></strong>=<em><code>0.999</code></em>, <strong><code>eps</code></strong>=<em><code>1e-08</code></em>) :: <a href="/gradless/updates.html#UpdateBase"><code>UpdateBase</code></a></p>
 </blockquote>
-<p>Helper class that provides a standard way to create an ABC using
-inheritance.</p>
+<p>A helper class for constructing update rules</p>
 
 </div>
 
