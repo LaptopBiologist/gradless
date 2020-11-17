@@ -10,7 +10,7 @@ from .gradient import SPSAGradient
 
 # Cell
 class GradientDescent():
-    def __init__(self,x_0, cost, update, gradient=SPSAGradient(),
+    def __init__(self,x_0, cost, update, gradient=SPSAGradient(), acceptance_rule=None,
                  param_stepsize=1, param_stepdecay=.4, param_decay_offset=0,
                  grad_stepsize=1, grad_stepdecay=.2,
                 seed=None):
@@ -36,7 +36,11 @@ class GradientDescent():
         self.theta_hist=[x_0]
         self.theta=x_0
 
-    def update_params (self, gradient_reps=1,block_val=numpy.inf, update_rvs=False, max_step=None):
+        self.acceptance_rule=acceptance_rule
+        if self.acceptance_rule is not None:
+            self.acceptance_rule.initialize(self)
+
+    def update_params (self, gradient_reps=1,block_val=None, update_rvs=False):
         """This performs a single update of the model parameters"""
         self.t+=1
 
@@ -44,24 +48,43 @@ class GradientDescent():
         ### get the gradient
         ghat= self.gradient.evaluate( self.theta, c_k, gradient_reps=gradient_reps, update_rvs=update_rvs )
 
+
         ### determine the proposed step
         a_k=self.param_step()
         step=self.update.evaluate(ghat, a_k ,self.t)
 
-        if max_step is not None:
-            bad_ind=numpy.abs(step)>max_step
-            step[bad_ind]=numpy.sign(step[bad_ind])*max_step
+
 
         ### update the parameters
         new_theta=self.theta-step
         new_cost=self.cost.evaluate(new_theta)
 
-        if new_cost>block_val*self.cost_history[-1]:
-            self.t-=1
-            return()
+        #I want to replace this with an acceptance rule
+
+        #Always reject nans
         if numpy.isnan(new_cost):
             self.t-=1
             return()
+
+        #Evaluate the acceptance criterion here
+        if self.acceptance_rule is not None:
+            accept=self.acceptance_rule.evaluate(new_cost, self.t)
+            if accept==False:
+                self.t-=1
+                return()
+
+        if block_val is not None:
+            if self.t<100:
+                if new_cost>(1.5*self.cost_history[-1]):
+                    self.t-=1
+                    return()
+            else:
+#                 mean_cost=numpy.mean(self.cost_history[-100:])
+                sd_cost=numpy.std(self.cost_history[-100:])
+                if new_cost>(block_val*sd_cost+self.cost_history[-1]):
+                    self.t-=1
+                    return()
+
         ### evaluate the objective function
 
         self.theta_hist.append(new_theta)
