@@ -47,7 +47,7 @@ nb_path: "01_optimizers.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="GradientDescent" class="doc_header"><code>class</code> <code>GradientDescent</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/optimizers.py#L12" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>GradientDescent</code>(<strong><code>x_0</code></strong>, <strong><code>cost</code></strong>, <strong><code>update</code></strong>, <strong><code>gradient</code></strong>=<em><code>&lt;gradless.gradient.SPSAGradient object at 0x7f8740510ef0&gt;</code></em>, <strong><code>param_stepsize</code></strong>=<em><code>1</code></em>, <strong><code>param_stepdecay</code></strong>=<em><code>0.4</code></em>, <strong><code>param_decay_offset</code></strong>=<em><code>0</code></em>, <strong><code>grad_stepsize</code></strong>=<em><code>1</code></em>, <strong><code>grad_stepdecay</code></strong>=<em><code>0.2</code></em>, <strong><code>seed</code></strong>=<em><code>None</code></em>)</p>
+<h2 id="GradientDescent" class="doc_header"><code>class</code> <code>GradientDescent</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/optimizers.py#L12" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>GradientDescent</code>(<strong><code>x_0</code></strong>, <strong><code>cost</code></strong>, <strong><code>update</code></strong>, <strong><code>gradient</code></strong>=<em><code>&lt;gradless.gradient.SPSAGradient object at 0x7fdbca3c8e80&gt;</code></em>, <strong><code>acceptance_rule</code></strong>=<em><code>None</code></em>, <strong><code>param_stepsize</code></strong>=<em><code>1</code></em>, <strong><code>param_stepdecay</code></strong>=<em><code>0.4</code></em>, <strong><code>param_decay_offset</code></strong>=<em><code>0</code></em>, <strong><code>grad_stepsize</code></strong>=<em><code>1</code></em>, <strong><code>grad_stepdecay</code></strong>=<em><code>0.2</code></em>, <strong><code>seed</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 
 </div>
@@ -73,17 +73,17 @@ nb_path: "01_optimizers.ipynb"
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-5-5c496cc2f8a1&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-fg">&lt;ipython-input-3-d467f81ba397&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
 <span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-red-fg">#export</span>
 <span class="ansi-green-fg">----&gt; 2</span><span class="ansi-red-fg"> </span><span class="ansi-green-fg">class</span> GradientDescent<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span>     def __init__(self,x_0, cost, update, gradient=SPSAGradient(), 
+<span class="ansi-green-intense-fg ansi-bold">      3</span>     def __init__(self,x_0, cost, update, gradient=SPSAGradient(), acceptance_rule=None,
 <span class="ansi-green-intense-fg ansi-bold">      4</span>                  param_stepsize<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">,</span> param_stepdecay<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">.4</span><span class="ansi-blue-fg">,</span> param_decay_offset<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">,</span>
 <span class="ansi-green-intense-fg ansi-bold">      5</span>                  grad_stepsize<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">,</span> grad_stepdecay<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">.2</span><span class="ansi-blue-fg">,</span>
 
-<span class="ansi-green-fg">&lt;ipython-input-5-5c496cc2f8a1&gt;</span> in <span class="ansi-cyan-fg">GradientDescent</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-fg">&lt;ipython-input-3-d467f81ba397&gt;</span> in <span class="ansi-cyan-fg">GradientDescent</span><span class="ansi-blue-fg">()</span>
 <span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-red-fg">#export</span>
 <span class="ansi-green-intense-fg ansi-bold">      2</span> <span class="ansi-green-fg">class</span> GradientDescent<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-fg">----&gt; 3</span><span class="ansi-red-fg">     def __init__(self,x_0, cost, update, gradient=SPSAGradient(), 
+<span class="ansi-green-fg">----&gt; 3</span><span class="ansi-red-fg">     def __init__(self,x_0, cost, update, gradient=SPSAGradient(), acceptance_rule=None,
 </span><span class="ansi-green-intense-fg ansi-bold">      4</span>                  param_stepsize<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">,</span> param_stepdecay<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">.4</span><span class="ansi-blue-fg">,</span> param_decay_offset<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">,</span>
 <span class="ansi-green-intense-fg ansi-bold">      5</span>                  grad_stepsize<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">,</span> grad_stepdecay<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">.2</span><span class="ansi-blue-fg">,</span>
 

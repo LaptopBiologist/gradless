@@ -20,7 +20,7 @@ class GradientBase(ABC):
 # Cell
 class SPSAGradient(GradientBase):
     """A class for computing the SPSA gradient estimate."""
-    def __init__(self, param_subsets=None, cost=None):
+    def __init__(self, param_subsets=None,fraction=None, cost=None):
         self.cost=cost
         self.param_subsets=param_subsets
         if self.param_subsets is not None:

@@ -5,6 +5,7 @@
     "optimizers": "optimizers.html",
     "updates: Strategies for updating parameters": "updates.html",
     "Models: Wrapping objective functions and data ": "models.html",
-    "gradient: Approximating the gradient": "gradient.html"
+    "gradient: Approximating the gradient": "gradient.html",
+    "Title": "testdata.html"
   }
 }

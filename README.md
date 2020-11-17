@@ -21,6 +21,14 @@ As this is still in development and geared for personal use, I can't make any ge
 * Define a class to organize minibatching. Probably class that wraps datasets along with instructions for how to minibatch the data. This would be called by the ```Model``` class when it evaluates the cost function with data. May need to modify ```Model``` a bit in terms of how it stores and uses ```self.data```.
 * Implement some procedures for smart hyperparameter choice
 
+## Similar packages
+
+
+
+[noisyopt](https://github.com/andim/noisyopt) provides an implementation of SPSA along with another approach to optimizing noisy objective functions. 
+
+
+
 ## Example usage
 
 Okay, let's try out a few toy examples, just to demonstrate how the API works. 
@@ -113,7 +121,7 @@ We'll fit this using the standard gradient descent algorithm described [hera](ht
 First, we'll choose an update rule from the ```updates``` submodule, creating an instance of the ```StandardSPSA``` class.
 
 ```python
-update_rule=updates.StandardSPSA()
+update_rule=updates.StandardSPSA(max_step=1)
 ```
 
 Now we'll create an instance of the ```GradientDescent``` optimizer.
@@ -124,7 +132,7 @@ opt_vanilla=optimizers.GradientDescent(x_0 = starts,
                                        cost = mse_cost,
                                        update = update_rule,
                                        gradient=gradient.SPSAGradient(numpy.array([0,0])),
-                                       param_stepsize=1, param_stepdecay=0.5, param_decay_offset=0, 
+                                       param_stepsize=.1, param_stepdecay=0.5, param_decay_offset=0, 
                                        grad_stepsize=1, grad_stepdecay=.3, )
 ```
 
@@ -133,51 +141,37 @@ Note that there are additional parameters that need to be defined. The arguments
 Now we can optimize the model by iteratively calling the ```update_params``` method of the ```GradientDescent``` instance. Note that we can use the ```tqdm``` library to create a progress bar for the fit
 
 ```python
-opt_vanilla.update_params(gradient_reps=100, max_step=1)
 for i in tqdm(range(10000)):
-    opt_vanilla.update_params(gradient_reps=3, max_step=1)
-#     elbo.sample_rvs()
+    opt_vanilla.update_params(gradient_reps=3)
+
 ```
 
-
-    ---------------------------------------------------------------------------
-
-    ValueError                                Traceback (most recent call last)
-
-    <ipython-input-9-ddb2d21a4ae9> in <module>
-    ----> 1 opt_vanilla.update_params(gradient_reps=100, max_step=1)
-          2 for i in tqdm(range(10000)):
-          3     opt_vanilla.update_params(gradient_reps=3, max_step=1)
-          4 #     elbo.sample_rvs()
+    100%|██████████| 10000/10000 [00:03<00:00, 3082.08it/s]
 
 
-    ~/projects/gradless/gradless/optimizers.py in update_params(self, gradient_reps, block_val, update_rvs, max_step)
-         54 
-         55         ### update the parameters
-    ---> 56         new_theta=self.theta-step
-         57         new_cost=self.cost.evaluate(new_theta)
-         58 
+The ```max_step``` argument in ```update_params``` can be used to limit how much parameters are allowed to be updated in each iteration, which can served as heuristic to limit divergences, especially in the early iterations where the learning rate is high. ```gradient_reps``` determines how many gradient approximations are estimated and averaged during each parameter update.
 
 
-    ValueError: operands could not be broadcast together with shapes (2,) (100,) 
 
-
-The ```max_step``` argument in ```update_params``` can be used to limit how much parameters are allowed to be updated in each iteration, which can served as heuristic to limit divergences, especially in the early iterations where the learning rate is high.
-
-We could also have employed other gradient descent update rules, for example Nestorov-accelerated Adam, which uses the history of prior gradients to (hopefully) more informed updates.
+We could also have employed other gradient descent update rules, for example Nestorov-accelerated Adam, which uses the history of prior gradients to make (hopefully) more informed updates.
 
 ```python
-update_rule=updates.NADAM( beta1=.9)
+update_rule=updates.ADAM( beta1=.9)
 opt_NADAM=optimizers.GradientDescent(starts,mse_cost,update_rule,gradient.SPSAGradient(numpy.array([0,0])),param_stepsize=1, param_stepdecay=0.5, param_decay_offset=0, 
                  grad_stepsize=1, grad_stepdecay=.2, )
 ```
 
+Because this relies on the history o
+
 ```python
-opt_NADAM.update_params(gradient_reps=100, max_step=1)
+
 for i in tqdm(range(10000)):
-    opt_NADAM.update_params(gradient_reps=3, max_step=1)
-#     elbo.sample_rvs()
+    opt_NADAM.update_params(gradient_reps=3)
+
 ```
+
+    100%|██████████| 10000/10000 [00:03<00:00, 3098.22it/s]
+
 
 ```python
 X,Y,Z=[],[],[]
@@ -225,6 +219,17 @@ pyplot.ylim(-15,15)
 pyplot.title('Nesterov-accelerated Adam with SPSA')
 ```
 
+
+
+
+    Text(0.5, 1.0, 'Nesterov-accelerated Adam with SPSA')
+
+
+
+
+![png](docs/images/output_24_1.png)
+
+
 ```python
 pyplot.plot(opt_vanilla.cost_history,c='blue', label='StandardSPSA')
 pyplot.plot(opt_NADAM.cost_history,c='red', label='NADAM')
@@ -234,6 +239,17 @@ pyplot.xlabel('Iteration')
 pyplot.yscale('log')
 pyplot.legend()
 ```
+
+
+
+
+    <matplotlib.legend.Legend at 0x7f7880254a90>
+
+
+
+
+![png](docs/images/output_25_1.png)
+
 
 ### Fitting the same regression with an intentionally bad loss function
 
@@ -273,19 +289,23 @@ Then we instatiate an instance of the ```GradientDescent``` class with the model
 
 mse_sim_cost=costs.Model(MSE_simulated_data, data)
 starts=numpy.array([-9,-9])
-update_rule=updates.StandardSPSA()
+update_rule=updates.StandardSPSA(max_step=.1)
 opt_vanilla=optimizers.GradientDescent(starts,mse_sim_cost,update_rule,
                                        gradient.SPSAGradient(numpy.array([0,0])),
+                                       acceptance_rule=updates.BlockWithLocalResiduals(2,100),
                                        param_stepsize=.2, param_stepdecay=0.3, param_decay_offset=0, 
                                        grad_stepsize=1, grad_stepdecay=.2, )
 ```
 
 ```python
-opt_vanilla.update_params(gradient_reps=100, max_step=.1)
+opt_vanilla.update_params(gradient_reps=100)
 for i in tqdm(range(50000)):
-    opt_vanilla.update_params(gradient_reps=3, max_step=.1)
-#     elbo.sample_rvs()
+    opt_vanilla.update_params(gradient_reps=3)
+
 ```
+
+    100%|██████████| 50000/50000 [00:46<00:00, 1069.89it/s]
+
 
 The ```max_step``` argument in ```update_params``` can be used to limit how much parameters are allowed to be updated in each iteration, which can served as heuristic to limit divergences, especially in the early iterations where the learning rate is high.
 
@@ -293,17 +313,22 @@ The ```max_step``` argument in ```update_params``` can be used to limit how much
 
 mse_sim_cost=costs.Model(MSE_simulated_data, data)
 starts=numpy.array([-9,-9])
-update_rule=updates.NADAM( beta1=.9)
-opt_NADAM=optimizers.GradientDescent(starts,mse_sim_cost,update_rule,gradient.SPSAGradient(numpy.array([0,0])),param_stepsize=.2, param_stepdecay=0.3, param_decay_offset=0, 
+update_rule=updates.NADAM( beta1=.9, max_step=.1)
+opt_NADAM=optimizers.GradientDescent(starts,mse_sim_cost,update_rule,gradient.SPSAGradient(numpy.array([0,0])),
+                                     acceptance_rule=updates.BlockWithLocalResiduals(2,100),
+                                     param_stepsize=.2, param_stepdecay=0.3, param_decay_offset=0, 
                  grad_stepsize=1, grad_stepdecay=.2, )
 ```
 
 ```python
-opt_NADAM.update_params(gradient_reps=100, max_step=.1)
+opt_NADAM.update_params(gradient_reps=100)
 for i in tqdm(range(50000)):
-    opt_NADAM.update_params(gradient_reps=3, max_step=.1)
-#     elbo.sample_rvs()
+    opt_NADAM.update_params(gradient_reps=3)
+
 ```
+
+    100%|██████████| 50000/50000 [00:47<00:00, 1044.37it/s]
+
 
 ```python
 X,Y,Z=[],[],[]
@@ -364,14 +389,43 @@ pyplot.title('Nesterov-accelerated Adam with SPSA')
 # pyplot.ylim(-15,15)
 ```
 
+
+
+
+    Text(0.5, 1.0, 'Nesterov-accelerated Adam with SPSA')
+
+
+
+
+![png](docs/images/output_36_1.png)
+
+
+```python
+pyplot.plot(numpy.log(opt_NADAM.cost_history))
+pyplot.xscale('log')
+```
+
+
+![png](docs/images/output_37_0.png)
+
+
+```python
+pyplot.plot(numpy.log(opt_vanilla.cost_history))
+pyplot.xscale('log')
+```
+
+
+![png](docs/images/output_38_0.png)
+
+
 It's likely that choosing different parameters for the step size of the standard SPSA gradient descent would lead to better performance.
 
 ### High dimensional model
 
 ```python
-ndim=100
-means=scipy.stats.norm.rvs(0, 10, size=ndim)
-sd=2.**scipy.stats.norm.rvs(3,1.5 , size=ndim)
+ndim=200
+means=scipy.stats.norm.rvs(0, 5, size=ndim)
+sd=numpy.abs(scipy.stats.norm.rvs(0,10, size=ndim))
 data=scipy.stats.norm.rvs(means, sd, size=(100,ndim))
 true_param=numpy.zeros(2*ndim)
 true_param[::2]=means
@@ -379,65 +433,230 @@ true_param[1::2]=numpy.log2(sd)
 ```
 
 ```python
-starts=scipy.stats.norm.rvs(0,3, size=means.shape[0]+sd.shape[0])
-```
-
-```python
-def evidence(theta, data):
+import jax.numpy as jnp
+import jax.scipy as jsc
+from jax import jit
+def evidence_python(theta, data):
     #priors
     mu=theta[::2]
     sd=theta[1::2]
 
-    mu_prior=scipy.stats.norm.logpdf(mu, 0, 10).sum()
-    sd_prior=scipy.stats.norm.logpdf(sd, 0, 10).sum()
+    mu_prior=jsc.stats.norm.logpdf(mu, 0, 10).sum()
+    sd_prior=jsc.stats.norm.logpdf(sd, 0, 5).sum()
     
-    loglk=scipy.stats.norm.logpdf(data, mu,2.**(sd)).sum()
+    loglk=jsc.stats.norm.logpdf(data, mu,2.**(sd)).sum()
     return -(mu_prior+sd_prior+loglk)
+
+#Use just-in-time compiling to speed it up
+evidence=jit(evidence_python)
 ```
+
+Let's choose an intial guese for the optimizaer
+
+```python
+starts=scipy.stats.norm.rvs(0,3, size=means.shape[0]+sd.shape[0])
+starts[::2]=scipy.stats.norm.rvs(0,8, size=means.shape[0])
+```
+
+```python
+print (evidence(starts, data))
+print (evidence(true_param, data))
+```
+
+    4725433300.0
+    64599.24
+
+
+In this case, we know the true values, so we can plot out what the negative log-likelihood looks like on a line passing from the initial guess to the true parameter value:
+
+```python
+param_line=true_param[:,None]+numpy.linspace(-1,1,200)*(starts-true_param)[:,None]
+cost=[]
+noisy_cost=[]
+for i in range (200):
+    cost.append(evidence(param_line[:,i], data))
+
+pyplot.figure(figsize=(10,5))
+pyplot.subplot(121)
+pyplot.plot(numpy.linspace(-1,1,200), cost)
+
+```
+
+
+
+
+    [<matplotlib.lines.Line2D at 0x7f783c66f780>]
+
+
+
+
+![png](docs/images/output_47_1.png)
+
+
+If we didn't know what the true parameter value was, we could nonetheless make some reasonable estimate of the magnitude. For example, simulating datasets from the generative model and compute 
+
+In linear scale this, this is quite hard to interpret, and seems likely to give an optimizer some problems. Let's take a look a the log-transform of the negative log-likelihood:
+
+```python
+pyplot.figure(figsize=(10,5))
+ax=pyplot.subplot(121)
+pyplot.plot(numpy.linspace(-1,1,200), numpy.log(cost))
+
+```
+
+
+
+
+    [<matplotlib.lines.Line2D at 0x7f783c630780>]
+
+
+
+
+![png](docs/images/output_50_1.png)
+
+
+This looks a lot better and easier to work with. So it will probably be easier to fit the model if we transform the function we're optimizing.
+
+However, while the negative log-likelihood is often positive for many models, this will not necessarily be the case for all models. Probability density functions can return values greater than $1$ if the probability distribution is highly concentrated (for example, beta distributions do this frequently). In that case, the negative log-likelihood maybe negative, so a log-transformation cannot be applied to negative log-likelihoods in general.
+
+An alternative in the inverse hyperbolic sine transformation (arcsineh): $asinh(\frac{x}{2})$. For large positives numbers, this is almost equivalent to the log-transform. For large negative numbers, this is almost equivalent to the negative of the log-transform. For smaller numbers, near zero, transformation is nearly linear and is almost equivalent to dividing them by $2$. That is, this transformation is always somewhere between a log-scale and linear-scale, being almost exactly log-scale for numbers with large magnitudes and almost exactly linear numbers near zero. Importantly, it's a monotonic transformation so it shouldn't change the location of optima, just squish the scales.
+
+```python
+pyplot.figure(figsize=(8,5))
+x=numpy.hstack([numpy.linspace(-10,0,200),numpy.linspace(0,10,200)])
+pyplot.plot(x,numpy.arcsinh(x/2), lw=8,c='dodgerblue', label='asinh(x/2)')
+pyplot.plot(x, numpy.sign(x)*numpy.log(numpy.abs(x)), c='firebrick',ls='--', lw=4, label='sign(x)*log( abs(x) )')
+pyplot.plot([-6,6],numpy.array([-6,6])/2,lw=4, ls='--',c='black', label='x/2')
+pyplot.legend(fontsize=14)
+pyplot.ylabel('y', size=14)
+pyplot.xlabel('x',size=14)
+
+```
+
+    /home/mpm289/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:4: RuntimeWarning: divide by zero encountered in log
+      after removing the cwd from sys.path.
+    /home/mpm289/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:4: RuntimeWarning: invalid value encountered in multiply
+      after removing the cwd from sys.path.
+
+
+
+
+
+    Text(0.5, 0, 'x')
+
+
+
+
+![png](docs/images/output_52_2.png)
+
+
+```python
+def evidence_asinh(theta, data):
+    #priors
+
+    return numpy.arcsinh (evidence(theta,data)/2)
+
+
+```
+
+```python
+
+cost_asinh=[]
+noisy_cost_asinh=[]
+for i in range (200):
+    cost_asinh.append(evidence_asinh(param_line[:,i], data))
+
+pyplot.figure(figsize=(10,5))
+pyplot.subplot(121)
+
+pyplot.plot(numpy.linspace(-1,1,200), numpy.log(cost), c='dodgerblue', lw=6,label= 'log neg log-lk')
+pyplot.plot(numpy.linspace(-1,1,200), cost_asinh, c='black',ls='--' ,lw=4, label='asinh neg log-lk')
+pyplot.legend()
+
+```
+
+
+
+
+    <matplotlib.legend.Legend at 0x7f783c56b828>
+
+
+
+
+![png](docs/images/output_54_1.png)
+
 
 To make this noisy, before evaluating the parameters, I'm going to add some noise drawn from $Normal(0,.5)$ to them.
-
-```python
-def noisy_evidence(theta, data):
-    #priors
-    mu=theta[::2]
-    sd=theta[1::2]
-    
-    mu_noise=scipy.stats.norm.rvs(0,.5, size=mu.shape)
-    sd_noise=scipy.stats.norm.rvs(0,.5, size=sd.shape)
-    
-    mu_prior=scipy.stats.norm.logpdf(mu, 0, 10).sum()
-    sd_prior=scipy.stats.norm.logpdf(sd, 0, 10).sum()
-    
-    loglk=scipy.stats.norm.logpdf(data, mu+mu_noise,2.**(sd+sd_noise)).sum()
-    return -(mu_prior+sd_prior+loglk)
-```
 
 ```python
 print (evidence(starts, data))
 ```
 
-```python
-seaborn.distplot([noisy_evidence(true_param, data) for i in range(200)])
-pyplot.scatter(evidence(true_param, data),0, c='r')
-```
+    4725433300.0
+
 
 ```python
 print (starts.shape)
 ```
 
-```python
-model=costs.Model(noisy_evidence, data)
+    (400,)
 
-update_rule=updates.NADAM( beta1=.9)
+
+```python
+model=costs.Model(evidence_asinh, data)
+
+update_rule=updates.NADAM(beta1=.99,max_step=.05)
 opt=optimizers.GradientDescent(starts,model,update_rule,gradient.SPSAGradient([0,1]*ndim),
-                               param_stepsize = 5, param_stepdecay = .2, param_decay_offset = 20, 
-                               grad_stepsize = 2, grad_stepdecay = .2, )
+                               acceptance_rule=updates.BlockWithLocalResiduals(2,100),
+                               param_stepsize = 1, param_stepdecay = .4, param_decay_offset = 0, 
+                               grad_stepsize = 1, grad_stepdecay = .2, )
 ```
 
 ```python
 # grad_test=gradient.SPSAGradient()
 ```
+
+```python
+pyplot.plot(opt.grad_stepsize/numpy.arange(50000)**opt.grad_stepdecay)
+pyplot.ylim(0)
+```
+
+    /home/mpm289/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:1: RuntimeWarning: divide by zero encountered in true_divide
+      """Entry point for launching an IPython kernel.
+
+
+
+
+
+    (0.0, 1.044256485250772)
+
+
+
+
+![png](docs/images/output_60_2.png)
+
+
+```python
+pyplot.plot(numpy.log10(opt.param_stepsize/(opt.param_decay_offset+numpy.arange(100000))**opt.param_stepdecay))
+# pyplot.ylim(0)
+
+
+```
+
+    /home/mpm289/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:1: RuntimeWarning: divide by zero encountered in true_divide
+      """Entry point for launching an IPython kernel.
+
+
+
+
+
+    [<matplotlib.lines.Line2D at 0x7f77c76b1d68>]
+
+
+
+
+![png](docs/images/output_61_2.png)
+
 
 ```python
 # grad_test.evaluate(post_proxy, starts,1)
@@ -448,26 +667,107 @@ from tqdm import tqdm
 ```
 
 ```python
+slopes, intercepts=[],[]
 
-opt.update_params(gradient_reps=100, max_step=1)
-for i in tqdm(range(10000)):
-    opt.update_params(gradient_reps=1, block_val=1.2, max_step=1 )
-#     elbo.sample_rvs()
+for i in tqdm(range(50000)):
+    opt.update_params(gradient_reps=1, block_val=None)
+    if i>201:
+        slopes.append(opt.acceptance_rule.slope)
+        intercepts.append(opt.acceptance_rule.intercept)
+```
+
+      0%|          | 0/50000 [00:00<?, ?it/s]/home/mpm289/projects/gradless/gradless/gradient.py:99: RuntimeWarning: divide by zero encountered in true_divide
+      ghat=(yplus-yminus)/(2*ck*delta)
+      5%|▍         | 2397/50000 [00:04<01:37, 488.38it/s]/home/mpm289/projects/gradless/gradless/gradient.py:99: RuntimeWarning: invalid value encountered in true_divide
+      ghat=(yplus-yminus)/(2*ck*delta)
+    100%|██████████| 50000/50000 [01:38<00:00, 506.28it/s]
+
+
+```python
+expected=numpy.array(slopes)*(numpy.arange(len(slopes)))+numpy.array(intercepts)
+
 ```
 
 ```python
-for i in tqdm(range(20000)):
-    opt.update_params(gradient_reps=1, block_val=1.2, max_step=1 )
-#     elbo.sample_rvs()
+xmin,xmax=10000,11000
+# pyplot.plot(numpy.log10(numpy.exp(opt.cost_history[10000:11000])))
+pyplot.plot(201+numpy.arange(len(slopes))[xmin:xmax],numpy.log(opt.cost_history)[xmin:xmax])
+pyplot.plot(201+numpy.arange(len(slopes))[xmin:xmax],numpy.log( expected)[xmin:xmax], c='red')
+# pyplot.xlim(10000,11000)
+```
+
+
+
+
+    [<matplotlib.lines.Line2D at 0x7f77d40db668>]
+
+
+
+
+![png](docs/images/output_66_1.png)
+
+
+```python
+
+for i in tqdm(range(100000)):
+    opt.update_params(gradient_reps=1 )
+
+```
+
+      0%|          | 0/100000 [00:00<?, ?it/s]/home/mpm289/projects/gradless/gradless/gradient.py:99: RuntimeWarning: divide by zero encountered in true_divide
+      ghat=(yplus-yminus)/(2*ck*delta)
+      0%|          | 51/100000 [00:00<03:19, 502.23it/s]/home/mpm289/projects/gradless/gradless/gradient.py:99: RuntimeWarning: invalid value encountered in true_divide
+      ghat=(yplus-yminus)/(2*ck*delta)
+    100%|██████████| 100000/100000 [03:15<00:00, 511.57it/s]
+
+
+```python
+# for i in tqdm(range(50000)):
+#     opt.update_params(gradient_reps=1, block_val=2, max_step=2 )
+
 ```
 
 ```python
 len(opt.theta_hist)
 ```
 
+
+
+
+    150001
+
+
+
 ```python
-pyplot.plot(numpy.log10(opt.cost_history))
+pyplot.plot(numpy.log10(numpy.exp(opt.cost_history)))
 ```
+
+
+
+
+    [<matplotlib.lines.Line2D at 0x7f77c68117b8>]
+
+
+
+
+![png](docs/images/output_70_1.png)
+
+
+```python
+# pyplot.plot(opt.cost_history[-5000:])
+pyplot.plot(numpy.exp(opt.cost_history[-5000:]))
+```
+
+
+
+
+    [<matplotlib.lines.Line2D at 0x7f77c67efc18>]
+
+
+
+
+![png](docs/images/output_71_1.png)
+
 
 ```python
 theta_hist=numpy.array(opt.theta_hist)
@@ -477,30 +777,97 @@ theta_hist=numpy.array(opt.theta_hist)
 true_param.shape
 ```
 
+
+
+
+    (400,)
+
+
+
 ```python
 pyplot.plot(theta_hist[-10000:,1], theta_hist[-10000:,2], zorder=-1)
 pyplot.scatter(true_param[1], true_param[2], c='r')
 ```
 
+
+
+
+    <matplotlib.collections.PathCollection at 0x7f77c675c9e8>
+
+
+
+
+![png](docs/images/output_74_1.png)
+
+
 ```python
-theta_hist[-1,:]- theta_hist[-2,:]
+sd[1]
+```
+
+
+
+
+    5.558911899838098
+
+
+
+```python
+# theta_hist[-1,:]- theta_hist[-2,:]
 ```
 
 ```python
 pyplot.scatter(theta_hist[-1,::2], means)
 ```
 
+
+
+
+    <matplotlib.collections.PathCollection at 0x7f77c6738978>
+
+
+
+
+![png](docs/images/output_77_1.png)
+
+
 ```python
-numpy.argmax(theta_hist[-1,::2]-means)
+max_ind=numpy.argmax(numpy.abs( theta_hist[-1,::2]-means))
 ```
+
+```python
+pyplot.plot(theta_hist[:,2*max_ind],)
+pyplot.scatter(theta_hist.shape[0], means[max_ind])
+```
+
+
+
+
+    <matplotlib.collections.PathCollection at 0x7f77043f8828>
+
+
+
+
+![png](docs/images/output_79_1.png)
+
 
 ```python
 # data[:,13]
 ```
 
 ```python
-pyplot.scatter(theta_hist[-1,1::2], numpy.log2(sd))
+pyplot.scatter(2.**theta_hist[-1,1::2], (sd))
 ```
+
+
+
+
+    <matplotlib.collections.PathCollection at 0x7f77c6605f28>
+
+
+
+
+![png](docs/images/output_81_1.png)
+
 
 Let's compare this to the posterior means, inferred using PyMC3. I'll set up the model and draw samples from the posterior using the No-U-Turn Sampler (NUTS).
 
@@ -508,34 +875,531 @@ Let's compare this to the posterior means, inferred using PyMC3. I'll set up the
 import pymc3 as pm
 with pm.Model() as model:
     mu=pm.Normal('mu',0,10, shape=ndim)
-    std=2.**pm.Normal('sd',0,10, shape=ndim)
+    std=2.**pm.Normal('sd',0,5, shape=ndim)
     obs=pm.Normal('obs',mu, std, observed=data)
 with model:
-    trace=pm.sample()
+#     trace=pm.sample()
+    MAP=pm.find_MAP()
+```
+
+
+
+<div>
+    <style>
+        /* Turns off some styling */
+        progress {
+            /* gets rid of default border in Firefox and Opera. */
+            border: none;
+            /* Needs to be in here for Safari polyfill so background images work as expected. */
+            background-size: auto;
+        }
+        .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+            background: #F44336;
+        }
+    </style>
+  <progress value='1017' class='' max='1017' style='width:300px; height:20px; vertical-align: middle;'></progress>
+  100.00% [1017/1017 00:00<00:00 logp = -64,412, ||grad|| = 2.4361]
+</div>
+
+
+
+    
+
+
+```python
+mean_mu=MAP['mu']
+sd_mu=MAP['sd']
 ```
 
 Let's compute the posterior means
 
 ```python
-mean_mu=trace['mu'].mean(0)
-sd_mu=trace['sd'].mean(0)
+# mean_mu=trace['mu'].mean(0)
+# sd_mu=trace['sd'].mean(0)
 
 ```
 
-```python
 And now well plot the 
-```
 
 ```python
 pyplot.scatter(theta_hist[-1,::2], (mean_mu))
-pyplot.plot([-30,20],[-30,20], color='black')
+pyplot.plot([-15,15],[-15,15], color='black')
 ```
+
+
+
+
+    [<matplotlib.lines.Line2D at 0x7f7709098630>]
+
+
+
+
+![png](docs/images/output_88_1.png)
+
+
+```python
+numpy.argmax(numpy.abs(theta_hist[-1,::2]-(mean_mu)))
+```
+
+
+
+
+    143
+
+
 
 ```python
 pyplot.scatter(theta_hist[-1,1::2], (sd_mu))
 pyplot.plot([-1,7],[-1,7], color='black')
 ```
 
+
+
+
+    [<matplotlib.lines.Line2D at 0x7f770462ec18>]
+
+
+
+
+![png](docs/images/output_90_1.png)
+
+
 ```python
-pyplot.plot(numpy.log(opt.cost_history))
+param_line=numpy.array([true_param]*400)
+print (param_line.shape)
+xmin=50
+param_line[:,2*max_ind]=numpy.linspace(-xmin,xmin,400)
+param_line=param_line.T
+
+cost_asinh=[]
+noisy_cost_asinh=[]
+
+for i in range (400):
+#     print (param_line[:,i].shape)
+    cost_asinh.append(evidence(param_line[:,i], data))
+#     noisy_cost_asinh.append(numpy.mean([ evidence(param_line[:,i], data) for j in range(5)]))
+#     cost_asinh.append( evidence(param_line[:,i], data))
+#     noisy_cost_asinh.append(noisy_evidence(param_line[:,i], data))
+pyplot.figure(figsize=(10,5))
+# ax=pyplot.subplot(121)
+
+
+pyplot.plot(numpy.linspace(-xmin,xmin,400), cost_asinh, c='black',ls='--' ,lw=4, label='asinh neg log-lk')
+pyplot.legend()
+# pyplot.subplot(122)
+
+# pyplot.scatter(numpy.linspace(-xmin,xmin,400), noisy_cost_asinh, c='black', label='asinh neg log-lk')
+pyplot.legend()
 ```
+
+    (400, 400)
+
+
+
+
+
+    <matplotlib.legend.Legend at 0x7f77044a8cf8>
+
+
+
+
+![png](docs/images/output_91_2.png)
+
+
+Okay, now let's try this again with the noisy likelihood
+
+```python
+param_schedule=numpy.array([0,1]*ndim)
+for i in range (8):
+    param_schedule[i::8]=i
+#     param_schedule[1::2][i::4]=i+4
+```
+
+```python
+print (param_schedule)
+```
+
+    [0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4
+     5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1
+     2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6
+     7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3
+     4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0
+     1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5
+     6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2
+     3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
+     0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4
+     5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1
+     2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7]
+
+
+```python
+model=costs.Model(evidence_asinh, data)
+
+update_rule=updates.NADAM(beta1=.99,max_step=.05)
+opt=optimizers.GradientDescent(starts,model,update_rule,gradient.SPSAGradient(param_schedule),
+                               acceptance_rule=updates.BlockWithLocalResiduals(2,100),
+                               param_stepsize = 1, param_stepdecay = .4, param_decay_offset = 0, 
+                               grad_stepsize = 1, grad_stepdecay = .2, )
+```
+
+```python
+# grad_test=gradient.SPSAGradient()
+```
+
+```python
+pyplot.plot(opt.grad_stepsize/numpy.arange(50000)**opt.grad_stepdecay)
+pyplot.ylim(0)
+```
+
+    /home/mpm289/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:1: RuntimeWarning: divide by zero encountered in true_divide
+      """Entry point for launching an IPython kernel.
+
+
+
+
+
+    (0.0, 1.044256485250772)
+
+
+
+
+![png](docs/images/output_97_2.png)
+
+
+```python
+pyplot.plot(numpy.log10(opt.param_stepsize/(opt.param_decay_offset+numpy.arange(100000))**opt.param_stepdecay))
+# pyplot.ylim(0)
+
+
+```
+
+    /home/mpm289/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:1: RuntimeWarning: divide by zero encountered in true_divide
+      """Entry point for launching an IPython kernel.
+
+
+
+
+
+    [<matplotlib.lines.Line2D at 0x7f77c76b1d68>]
+
+
+
+
+![png](docs/images/output_98_2.png)
+
+
+```python
+# grad_test.evaluate(post_proxy, starts,1)
+```
+
+```python
+from tqdm import tqdm
+```
+
+```python
+slopes, intercepts=[],[]
+
+for i in tqdm(range(50000)):
+    opt.update_params(gradient_reps=1, block_val=None)
+
+```
+
+    100%|██████████| 50000/50000 [05:00<00:00, 166.41it/s]
+
+
+```python
+
+for i in tqdm(range(50000)):
+    opt.update_params(gradient_reps=1 )
+
+```
+
+    100%|██████████| 50000/50000 [05:01<00:00, 165.67it/s]
+
+
+```python
+# for i in tqdm(range(50000)):
+#     opt.update_params(gradient_reps=1, block_val=2, max_step=2 )
+
+```
+
+```python
+len(opt.theta_hist)
+```
+
+
+
+
+    150001
+
+
+
+```python
+pyplot.plot(numpy.log10(numpy.exp(opt.cost_history)))
+```
+
+
+
+
+    [<matplotlib.lines.Line2D at 0x7f76f8ddd908>]
+
+
+
+
+![png](docs/images/output_105_1.png)
+
+
+```python
+# pyplot.plot(opt.cost_history[-5000:])
+pyplot.plot(numpy.exp(opt.cost_history[-5000:]))
+```
+
+
+
+
+    [<matplotlib.lines.Line2D at 0x7f76f8d3a0f0>]
+
+
+
+
+![png](docs/images/output_106_1.png)
+
+
+```python
+theta_hist=numpy.array(opt.theta_hist)
+```
+
+```python
+true_param.shape
+```
+
+
+
+
+    (400,)
+
+
+
+```python
+pyplot.plot(theta_hist[-10000:,1], theta_hist[-10000:,2], zorder=-1)
+pyplot.scatter(true_param[1], true_param[2], c='r')
+```
+
+
+
+
+    <matplotlib.collections.PathCollection at 0x7f76f8d22208>
+
+
+
+
+![png](docs/images/output_109_1.png)
+
+
+```python
+sd[1]
+```
+
+
+
+
+    5.558911899838098
+
+
+
+```python
+# theta_hist[-1,:]- theta_hist[-2,:]
+```
+
+```python
+pyplot.scatter(theta_hist[-1,::2], means)
+```
+
+
+
+
+    <matplotlib.collections.PathCollection at 0x7f76e5b4d908>
+
+
+
+
+![png](docs/images/output_112_1.png)
+
+
+```python
+max_ind=numpy.argmax(numpy.abs( theta_hist[-1,::2]-means))
+```
+
+```python
+pyplot.plot(theta_hist[:,2*max_ind],)
+pyplot.scatter(theta_hist.shape[0], means[max_ind])
+```
+
+
+
+
+    <matplotlib.collections.PathCollection at 0x7f76e5b30400>
+
+
+
+
+![png](docs/images/output_114_1.png)
+
+
+```python
+# data[:,13]
+```
+
+```python
+pyplot.scatter(2.**theta_hist[-1,1::2], (sd))
+```
+
+
+
+
+    <matplotlib.collections.PathCollection at 0x7f76e5a8f320>
+
+
+
+
+![png](docs/images/output_116_1.png)
+
+
+Let's compare this to the posterior means, inferred using PyMC3. I'll set up the model and draw samples from the posterior using the No-U-Turn Sampler (NUTS).
+
+```python
+import pymc3 as pm
+with pm.Model() as model:
+    mu=pm.Normal('mu',0,10, shape=ndim)
+    std=2.**pm.Normal('sd',0,5, shape=ndim)
+    obs=pm.Normal('obs',mu, std, observed=data)
+with model:
+#     trace=pm.sample()
+    MAP=pm.find_MAP()
+```
+
+
+
+<div>
+    <style>
+        /* Turns off some styling */
+        progress {
+            /* gets rid of default border in Firefox and Opera. */
+            border: none;
+            /* Needs to be in here for Safari polyfill so background images work as expected. */
+            background-size: auto;
+        }
+        .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+            background: #F44336;
+        }
+    </style>
+  <progress value='1017' class='' max='1017' style='width:300px; height:20px; vertical-align: middle;'></progress>
+  100.00% [1017/1017 00:01<00:00 logp = -64,412, ||grad|| = 2.4361]
+</div>
+
+
+
+    
+
+
+```python
+mean_mu=MAP['mu']
+sd_mu=MAP['sd']
+```
+
+Let's compute the posterior means
+
+```python
+# mean_mu=trace['mu'].mean(0)
+# sd_mu=trace['sd'].mean(0)
+
+```
+
+And now well plot the 
+
+```python
+pyplot.scatter(theta_hist[-1,::2], (mean_mu))
+pyplot.plot([-15,15],[-15,15], color='black')
+```
+
+
+
+
+    [<matplotlib.lines.Line2D at 0x7f76e54b6f98>]
+
+
+
+
+![png](docs/images/output_123_1.png)
+
+
+```python
+numpy.argmax(numpy.abs(theta_hist[-1,::2]-(mean_mu)))
+```
+
+
+
+
+    139
+
+
+
+```python
+pyplot.scatter(2.**theta_hist[-1,1::2], 2.**(sd_mu))
+pyplot.plot([-1,7],[-1,7], color='black')
+```
+
+
+
+
+    [<matplotlib.lines.Line2D at 0x7f76e5814f60>]
+
+
+
+
+![png](docs/images/output_125_1.png)
+
+
+```python
+param_line=numpy.array([true_param]*400)
+print (param_line.shape)
+xmin=50
+param_line[:,2*max_ind]=numpy.linspace(-xmin,xmin,400)
+param_line=param_line.T
+
+cost_asinh=[]
+noisy_cost_asinh=[]
+
+for i in range (400):
+#     print (param_line[:,i].shape)
+    cost_asinh.append(evidence(param_line[:,i], data))
+#     noisy_cost_asinh.append(numpy.mean([ evidence(param_line[:,i], data) for j in range(5)]))
+#     cost_asinh.append( evidence(param_line[:,i], data))
+#     noisy_cost_asinh.append(noisy_evidence(param_line[:,i], data))
+pyplot.figure(figsize=(10,5))
+# ax=pyplot.subplot(121)
+
+
+pyplot.plot(numpy.linspace(-xmin,xmin,400), cost_asinh, c='black',ls='--' ,lw=4, label='asinh neg log-lk')
+pyplot.legend()
+# pyplot.subplot(122)
+
+# pyplot.scatter(numpy.linspace(-xmin,xmin,400), noisy_cost_asinh, c='black', label='asinh neg log-lk')
+pyplot.legend()
+```
+
+    (400, 400)
+
+
+
+
+
+    <matplotlib.legend.Legend at 0x7f77044a8cf8>
+
+
+
+
+![png](docs/images/output_126_2.png)
+
+
+Okay, now let's try this again with the noisy likelihood

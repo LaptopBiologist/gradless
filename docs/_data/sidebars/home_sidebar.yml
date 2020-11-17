@@ -24,6 +24,9 @@ entries:
     - output: web,pdf
       title: 'gradient: Approximating the gradient'
       url: gradient.html
+    - output: web,pdf
+      title: Title
+      url: testdata.html
     output: web
     title: gradless
   output: web
