@@ -38,7 +38,7 @@ nb_path: "index.ipynb"
 <p>As this is still in development and geared for personal use, I can't make any general guarantees about its performance or behavior. So if you must use it, use with caution and skepticism.</p>
 <h2 id="To-do">To do<a class="anchor-link" href="#To-do"> </a></h2><ul>
 <li>Incorporate just-in-time compilation with JAX to speed up time-consuming functions</li>
-<li>Define a class to organize minibatching. Probably class that wraps datasets along with instructions for how to minibatch the data. This would be called by the <code>[`Model`](/gradless/models.html#Model)</code> class when it evaluates the cost function with data. May need to modify <code>[`Model`](/gradless/models.html#Model)</code> a bit in terms of how it stores and uses <code>self.data</code>.</li>
+<li>Define a class to organize minibatching. Probably class that wraps datasets along with instructions for how to minibatch the data. This would be called by the <a href="/gradless/models.html#Model"><code>Model</code></a> class when it evaluates the cost function with data. May need to modify <a href="/gradless/models.html#Model"><code>Model</code></a> a bit in terms of how it stores and uses <code>self.data</code>.</li>
 <li>Implement some procedures for smart hyperparameter choice</li>
 </ul>
 <h2 id="Related-packages">Related packages<a class="anchor-link" href="#Related-packages"> </a></h2><p><a href="https://github.com/andim/noisyopt">noisyopt</a> provides an implementation of SPSA along with another approach to optimizing noisy objective functions.</p>
@@ -194,7 +194,7 @@ nb_path: "index.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Okay, now we'll create the model to be optimized by wrapping the cost function and the data in the <code>[`Model`](/gradless/models.html#Model)</code> class</p>
+<p>Okay, now we'll create the model to be optimized by wrapping the cost function and the data in the <a href="/gradless/models.html#Model"><code>Model</code></a> class</p>
 
 </div>
 </div>
@@ -219,7 +219,7 @@ nb_path: "index.ipynb"
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We'll fit this using the standard SPSA gradient descent algorithm described <a href="https://www.jhuapl.edu/SPSA/PDF-SPSA/Spall_An_Overview.PDF">here</a>. To do this, we're going to construct an instance of the <a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> class, passing it the model, an initial guess, and an update rule.</p>
-<p>First, we'll choose an update rule from the <code>[`updates`](/gradless/updates.html)</code> submodule, creating an instance of the <code>[`StandardSPSA`](/gradless/updates.html#StandardSPSA)</code> class.</p>
+<p>First, we'll choose an update rule from the <a href="/gradless/updates.html"><code>updates</code></a> submodule, creating an instance of the <a href="/gradless/updates.html#StandardSPSA"><code>StandardSPSA</code></a> class.</p>
 
 </div>
 </div>
@@ -250,7 +250,7 @@ nb_path: "index.ipynb"
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now we'll create an instance of the <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> optimizer. <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> objects wrap the <code>[`Model`](/gradless/models.html#Model)</code> to be optimized along with update rules that are used to optimize the parameters.</p>
+<p>Now we'll create an instance of the <a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> optimizer. <a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> objects wrap the <a href="/gradless/models.html#Model"><code>Model</code></a> to be optimized along with update rules that are used to optimize the parameters.</p>
 
 </div>
 </div>
@@ -281,7 +281,7 @@ nb_path: "index.ipynb"
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Note that there are additional parameters that need to be defined. The arguments beginning with <code>param</code> all control how much the parameters will be updated at each iteration and how this decays over time. The two arguments beginning with <code>grad</code> control how much the model parameters will be perturbed during the gradient approximation. It may be necessary to tune these parameters to work with a given model.</p>
-<p>The primary way to interact with the <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> optimizer is by calling the <code>update_params</code> method of the <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> instance, which performs a single update of the model parameters. Doing this iteratively allows us to the fit model.</p>
+<p>The primary way to interact with the <a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> optimizer is by calling the <code>update_params</code> method of the <a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> instance, which performs a single update of the model parameters. Doing this iteratively allows us to the fit model.</p>
 <p>(Note that <a href="https://tqdm.github.io/"><code>tqdm</code></a> is a really great library for the impatient, as it automatically creates a progress bar so you can check the optimizer's progress.)</p>
 
 </div>

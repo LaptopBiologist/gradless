@@ -18,7 +18,7 @@ As this is still in development and geared for personal use, I can't make any ge
 ## To do
 
 * Incorporate just-in-time compilation with JAX to speed up time-consuming functions
-* Define a class to organize minibatching. Probably class that wraps datasets along with instructions for how to minibatch the data. This would be called by the ```Model``` class when it evaluates the cost function with data. May need to modify ```Model``` a bit in terms of how it stores and uses ```self.data```.
+* Define a class to organize minibatching. Probably class that wraps datasets along with instructions for how to minibatch the data. This would be called by the `Model` class when it evaluates the cost function with data. May need to modify `Model` a bit in terms of how it stores and uses ```self.data```.
 * Implement some procedures for smart hyperparameter choice
 
 ## Related packages
@@ -98,7 +98,7 @@ def MSE(theta, data):
     return numpy.mean((y-y_pred)**2)
 ```
 
-Okay, now we'll create the model to be optimized by wrapping the cost function and the data in the ```Model``` class
+Okay, now we'll create the model to be optimized by wrapping the cost function and the data in the `Model` class
 
 ```python
 mse_cost=costs.Model(cost=MSE, data=data)
@@ -106,7 +106,7 @@ mse_cost=costs.Model(cost=MSE, data=data)
 
 We'll fit this using the standard SPSA gradient descent algorithm described [here](https://www.jhuapl.edu/SPSA/PDF-SPSA/Spall_An_Overview.PDF). To do this, we're going to construct an instance of the `GradientDescent` class, passing it the model, an initial guess, and an update rule.
 
-First, we'll choose an update rule from the ```updates``` submodule, creating an instance of the ```StandardSPSA``` class.
+First, we'll choose an update rule from the `updates` submodule, creating an instance of the `StandardSPSA` class.
 
 ```python
 update_rule=updates.StandardSPSA(max_step=1)
@@ -114,7 +114,7 @@ update_rule=updates.StandardSPSA(max_step=1)
 
 The ```max_step``` argument can be used to limit how much parameters are allowed to be updated in a single iteration, which can serve as a heuristic to limit divergences, especially in the early iterations where the learning rate is high. If the proposed step updates a parameter by more than ```max_step```, the entire proposed step is rescaled such that no parameter is updated by more than ```max_step```.
 
-Now we'll create an instance of the ```GradientDescent``` optimizer. ```GradientDescent``` objects wrap the ```Model``` to be optimized along with update rules that are used to optimize the parameters.
+Now we'll create an instance of the `GradientDescent` optimizer. `GradientDescent` objects wrap the `Model` to be optimized along with update rules that are used to optimize the parameters.
 
 ```python
 starts=numpy.array([-9,-9]) #Here's our initial guess
@@ -128,7 +128,7 @@ opt_vanilla=optimizers.GradientDescent(x_0 = starts,
 
 Note that there are additional parameters that need to be defined. The arguments beginning with ```param``` all control how much the parameters will be updated at each iteration and how this decays over time. The two arguments beginning with ```grad``` control how much the model parameters will be perturbed during the gradient approximation. It may be necessary to tune these parameters to work with a given model.
 
-The primary way to interact with the ```GradientDescent``` optimizer is by calling the ```update_params``` method of the ```GradientDescent``` instance, which performs a single update of the model parameters. Doing this iteratively allows us to the fit model.
+The primary way to interact with the `GradientDescent` optimizer is by calling the ```update_params``` method of the `GradientDescent` instance, which performs a single update of the model parameters. Doing this iteratively allows us to the fit model.
 
 (Note that [```tqdm```](https://tqdm.github.io/) is a really great library for the impatient, as it automatically creates a progress bar so you can check the optimizer's progress.)
 

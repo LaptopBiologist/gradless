@@ -259,7 +259,7 @@ neg log evidence(theta_true) = 30946.0
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>In linear scale this is quite hard to interpret, and seems likely to give an optimizer some problems, given how much the gradients will vary in scale as it explores the parameter space. The gradients are going to vary over a wide range of magnitudes, which make it hard for me to think about what sorts of step sizes are reasonable. And step sizes that work well when the gradient is extremely steep will work poorly once they become shallow (and vice versa).</p>
-<p>However, the log-transformation is not universally appropriate for transforming negative log-likelihoods/probabilites, because they can in some circumstances be negative. Instead, if we wish to squish the scale spanned by the cost function the inverse hyperbolic sine transform (<code>math.arcsinh_transfrom</code>) is a better option. So we'll use this to transform the log-evidence so that the gradients are more consistent in scale.</p>
+<p>However, the log-transformation is not universally appropriate for transforming negative log-likelihoods/probabilites, because they can in some circumstances be negative. Instead, if we wish to squish the scale spanned by the cost function the inverse hyperbolic sine transform (<code>math.arcsinh_transform</code>) is a better option. So we'll use this to transform the log-evidence so that the gradients are more consistent in scale.</p>
 
 </div>
 </div>
