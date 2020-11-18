@@ -30,6 +30,12 @@ entries:
     - output: web,pdf
       title: math - Utility functions for calculations
       url: math.html
+    - output: web,pdf
+      title: Example - Fitting a 100-dimensional Gaussian
+      url: examples_1.html
+    - output: web,pdf
+      title: Example - A high-dimensional model with a noisy objective function
+      url: examples_2.html
     output: web
     title: gradless
   output: web
