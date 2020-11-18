@@ -31,12 +31,12 @@ nb_path: "02_updates.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A collection of various update rules that can be used by the <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> optimizer are collected here.</p>
+<p>A collection of various update rules that can be used by the <a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> optimizer are collected here.</p>
 <hr>
-<p><code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> uses two kinds of update rules</p>
+<p><a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> uses two kinds of update rules</p>
 <ol>
 <li>Update steps (required): Determines how to update the model parameters based on the gradient estimate</li>
-<li>Acceptance criteria: Decides whether a parameter update should be accepted or rejected. <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> always rejects parameter updates that yield an invalid cost (i.e. <code>nan</code> or <code>inf</code>), but additional rules be provided.</li>
+<li>Acceptance criteria: Decides whether a parameter update should be accepted or rejected. <a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> always rejects parameter updates that yield an invalid cost (i.e. <code>nan</code> or <code>inf</code>), but additional rules be provided.</li>
 </ol>
 <p>Many of the update steps are implemented based on <a href="https://arxiv.org/abs/1609.04747">this review</a></p>
 
@@ -85,7 +85,7 @@ nb_path: "02_updates.ipynb"
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <hr>
-<p><code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> expects update steps to be instances of a class with an <code>evaluate</code> method that takes as input a gradient estimate, a learning rate, and the current iteration (Comment: this seems like a suboptimal requirement), and returns a proposed parameter update. The reason update rules are required to be structured as classes is so that they can store any information they need to update the parameters. All update rules should return a numpy array of floats to be used as a step to update the model parameters.</p>
+<p><a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> expects update steps to be instances of a class with an <code>evaluate</code> method that takes as input a gradient estimate, a learning rate, and the current iteration (Comment: this seems like a suboptimal requirement), and returns a proposed parameter update. The reason update rules are required to be structured as classes is so that they can store any information they need to update the parameters. All update rules should return a numpy array of floats to be used as a step to update the model parameters.</p>
 
 </div>
 </div>
@@ -307,9 +307,9 @@ $$\theta_{t+1}=\theta_t - a_t \frac{\hat{g}_t}{\sqrt{G_t}+\epsilon} $$
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <hr>
-<p>An acceptance criterion evaluates the cost after an update step and compares it to past evaluations of the cost function to decide whether it should be accepted or rejected. <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> expects acceptance criteria to be objects of a class with two required methods:</p>
+<p>An acceptance criterion evaluates the cost after an update step and compares it to past evaluations of the cost function to decide whether it should be accepted or rejected. <a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> expects acceptance criteria to be objects of a class with two required methods:</p>
 <ol>
-<li><code>initialize</code>: This is called when a <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> object is initialized and performs any routines needed to set-up the acceptance criteria.  For example, an acceptance criterion based on the amount of noise in the cost function might evaluate the cost function some number ot times and compute its standard deviation. This method will be passed the entire <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> object, so it has access to all information stored therein.</li>
+<li><code>initialize</code>: This is called when a <a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> object is initialized and performs any routines needed to set-up the acceptance criteria.  For example, an acceptance criterion based on the amount of noise in the cost function might evaluate the cost function some number ot times and compute its standard deviation. This method will be passed the entire <a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> object, so it has access to all information stored therein.</li>
 <li><code>evaluate</code>: This </li>
 </ol>
 

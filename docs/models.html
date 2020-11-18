@@ -33,8 +33,8 @@ nb_path: "03_models.ipynb"
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>A collection of classes and functions to structuring models to be optimized.</p>
 <hr>
-<p>The <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> optimizer expects the cost function to be stored within a class with an <code>evaluate()</code> method, which takes a 1D numpy array of parameter values and returns a float. A generic class <code>[`Model`](/gradless/models.html#Model)</code> is provided to organize user-defined cost functions and data so they can be easily passed to the optimizer.</p>
-<p>Should this class prove insufficient in some circumstances, a description of the API expected by <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> along with an abstract base class is provided.</p>
+<p>The <a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> optimizer expects the cost function to be stored within a class with an <code>evaluate()</code> method, which takes a 1D numpy array of parameter values and returns a float. A generic class <a href="/gradless/models.html#Model"><code>Model</code></a> is provided to organize user-defined cost functions and data so they can be easily passed to the optimizer.</p>
+<p>Should this class prove insufficient in some circumstances, a description of the API expected by <a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> along with an abstract base class is provided.</p>
 
 </div>
 </div>
@@ -82,8 +82,7 @@ classes to store models used by GradientDescent.</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <hr>
-<p><code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> is designed to
-The base class <code>[`ModelBase`](/gradless/models.html#ModelBase)</code> is relatively simple, consisting of two methods and two attributes</p>
+<p>The base class <a href="/gradless/models.html#ModelBase"><code>ModelBase</code></a> is relatively simple, consisting of two methods and two attributes</p>
 <p>The methods are</p>
 <ol>
 <li><code>.evaluate</code> which must be defined in any particular cost function class written by the user</li>
@@ -92,7 +91,7 @@ The base class <code>[`ModelBase`](/gradless/models.html#ModelBase)</code> is re
 <p>The two attributes are</p>
 <ol>
 <li><code>RV</code> which by default is <code>None</code>, but may be used to store a function that can generate random variables that are used in the evaluation of the cost function (e.g. <code>scipy.stats.norm.rvs</code>)</li>
-<li><code>update_rvs</code> is a flag that tells the <code>[`SPSAGradient`](/gradless/gradient.html#SPSAGradient)</code> class to update the random variable each time it evaluates the gradient. By default this is <code>True</code>, though this will only have an effect if a random variable generator is included in the cost.</li>
+<li><code>update_rvs</code> is a flag that tells the <a href="/gradless/gradient.html#SPSAGradient"><code>SPSAGradient</code></a> class to update the random variable each time it evaluates the gradient. By default this is <code>True</code>, though this will only have an effect if a random variable generator is included in the cost.</li>
 </ol>
 
 </div>
@@ -140,7 +139,7 @@ update_rvs: True/False call RV.rvs() before each gradient evaluation</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <hr>
-<p>In general, though, it shouldn't be necessary to use the base class, as most simple cost functions can be wrapped in an instance of the <code>[`Model`](/gradless/models.html#Model)</code> class. The <code>[`Model`](/gradless/models.html#Model)</code> class can be used to wrapped both a cost function and data</p>
+<p>In general, though, it shouldn't be necessary to use the base class, as most simple cost functions can be wrapped in an instance of the <a href="/gradless/models.html#Model"><code>Model</code></a> class. The <a href="/gradless/models.html#Model"><code>Model</code></a> class can be used to wrapped both a cost function and data</p>
 <p>The only required argument is a user-defined cost function. If the model is to be fit to data, then the data--organized in a way that the cost function expects--should also passed to the class.</p>
 <p>The <code>cost</code> function should take three arguments:</p>
 <ol>
@@ -149,7 +148,7 @@ update_rvs: True/False call RV.rvs() before each gradient evaluation</p>
 <li><code>z</code>: (Optional) The outcome of a random variable used to compute the objective function.</li>
 </ol>
 <p>The <code>data</code> may be organized however the <code>cost</code> expects, for example as dictionary, a list, or a numpy array.</p>
-<p>The two optional arguments taken by <code>[`Model`](/gradless/models.html#Model)</code> relate to a random variable that may be passed to the cost function:</p>
+<p>The two optional arguments taken by <a href="/gradless/models.html#Model"><code>Model</code></a> relate to a random variable that may be passed to the cost function:</p>
 <ol>
 <li><code>RV</code> may be a passed a object with a <code>.rvs()</code> method that generates a random variable when called (e.g. a frozen scipy distribution such are <code>scipy.stats.norm([0]*10,[1]*10)</code> which can be used to generate 10 samples from a unit normal distribution.</li>
 <li><code>update_rvs</code> stores a True/False value, telling the gradient approximation whether to regenerate the random variable after each gradient estimate.</li>
@@ -253,7 +252,7 @@ $$y=2x+5+\epsilon$$
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Okay, now we'll wrap the cost function and the data in the <code>[`Model`](/gradless/models.html#Model)</code> class</p>
+<p>Okay, now we'll wrap the cost function and the data in the <a href="/gradless/models.html#Model"><code>Model</code></a> class</p>
 
 </div>
 </div>

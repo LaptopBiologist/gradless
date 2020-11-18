@@ -77,20 +77,20 @@ nb_path: "01_optimizers.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The general class used to perform gradient descent is <code>optimizers.GradientDescent</code> which is modelled after the default implementation of Spall's SPSA optimization scheme outlined <a href="https://www.jhuapl.edu/SPSA/PDF-SPSA/Spall_An_Overview.PDF">here</a>. However, this can be modified by choosing different update rules to embed the SPSA gradient estimate inside more efficient gradient descent algorithms, such as ADAM and ADAGRAD.</p>
+<p>The general class used to perform gradient descent is <a href="/gradless/optimizers.html#GradientDescent"><code>GradientDescent</code></a> which is modelled after the default implementation of Spall's SPSA optimization scheme outlined <a href="https://www.jhuapl.edu/SPSA/PDF-SPSA/Spall_An_Overview.PDF">here</a>. However, this can be modified by choosing different update rules to embed the SPSA gradient estimate inside more efficient gradient descent algorithms, such as ADAM and ADAGRAD.</p>
 <h3 id="Usage">Usage<a class="anchor-link" href="#Usage"> </a></h3><p>The <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> class has two general classes of arguments:</p>
 <ol>
 <li><p>Arguments that determine how model parameters are updated (cost, update, gradient)</p>
 <ul>
 <li><p>x_0 (required): An initial guess of the model parameters where the optimizer will begin</p>
 </li>
-<li><p>model (required): The model to be optimized. Generally this should be an instance of the <code>costs.Model</code> class.</p>
+<li><p>model (required): The model to be optimized. Generally this should be an instance of the <a href="/gradless/models.html#Model"><code>Model</code></a> class.</p>
 </li>
-<li><p>update (required): This should be a class that proposes a parameter update based on the gradient. See <code>[`updates`](/gradless/updates.html)</code> for details</p>
+<li><p>update (required): This should be a class that proposes a parameter update based on the gradient. See <a href="/gradless/updates.html"><code>updates</code></a> for details</p>
 </li>
-<li><p>gradient : This should be an instance of a class that provides an estimate of the gradient. By default, uses <code>gradient.SPSAGradient</code>. See <code>[`gradient`](/gradless/gradient.html)</code> for more details</p>
+<li><p>gradient : This should be an instance of a class that provides an estimate of the gradient. By default, uses <a href="/gradless/gradient.html#SPSAGradient"><code>SPSAGradient</code></a>. See <code>[`gradient`](/gradless/gradient.html)</code> for more details</p>
 </li>
-<li><p>acceptance_rule (optional): An AcceptanceRule class may be passed here to define rules for accepting or rejecting parameter updates. See <code>[`updates`](/gradless/updates.html)</code> for details</p>
+<li><p>acceptance_rule (optional): An AcceptanceRule class may be passed here to define rules for accepting or rejecting parameter updates. See <a href="/gradless/updates.html"><code>updates</code></a> for details</p>
 </li>
 </ul>
 </li>
