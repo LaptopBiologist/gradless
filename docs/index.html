@@ -41,7 +41,7 @@ nb_path: "index.ipynb"
 <li>Define a class to organize minibatching. Probably class that wraps datasets along with instructions for how to minibatch the data. This would be called by the <code>[`Model`](/gradless/models.html#Model)</code> class when it evaluates the cost function with data. May need to modify <code>[`Model`](/gradless/models.html#Model)</code> a bit in terms of how it stores and uses <code>self.data</code>.</li>
 <li>Implement some procedures for smart hyperparameter choice</li>
 </ul>
-<h2 id="Relates-packages">Relates packages<a class="anchor-link" href="#Relates-packages"> </a></h2><p><a href="https://github.com/andim/noisyopt">noisyopt</a> provides an implementation of SPSA along with another approach to optimizing noisy objective functions.</p>
+<h2 id="Related-packages">Related packages<a class="anchor-link" href="#Related-packages"> </a></h2><p><a href="https://github.com/andim/noisyopt">noisyopt</a> provides an implementation of SPSA along with another approach to optimizing noisy objective functions.</p>
 <p>For objective functions that aren't noisy <a href="https://github.com/google/jax">JAX</a> provides tools for automatically computing the gradients of python functions.</p>
 
 </div>
@@ -49,7 +49,7 @@ nb_path: "index.ipynb"
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Example-usage">Example usage<a class="anchor-link" href="#Example-usage"> </a></h2><p>Below are a few toy examples, just to demonstrate how the API works.</p>
+<h2 id="Example-usage">Example usage<a class="anchor-link" href="#Example-usage"> </a></h2><p>Below is a very simple toy example, just to demonstrate how the API works.</p>
 <p>First we'll import the packages that we need.</p>
 
 </div>

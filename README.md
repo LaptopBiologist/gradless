@@ -21,7 +21,7 @@ As this is still in development and geared for personal use, I can't make any ge
 * Define a class to organize minibatching. Probably class that wraps datasets along with instructions for how to minibatch the data. This would be called by the ```Model``` class when it evaluates the cost function with data. May need to modify ```Model``` a bit in terms of how it stores and uses ```self.data```.
 * Implement some procedures for smart hyperparameter choice
 
-## Relates packages
+## Related packages
 
 [noisyopt](https://github.com/andim/noisyopt) provides an implementation of SPSA along with another approach to optimizing noisy objective functions. 
 
@@ -32,7 +32,9 @@ For objective functions that aren't noisy [JAX](https://github.com/google/jax) p
 
 ## Example usage
 
-Below are a few toy examples, just to demonstrate how the API works. 
+Below is a very simple toy example, just to demonstrate how the API works. 
+
+
 
 First we'll import the packages that we need.
 
