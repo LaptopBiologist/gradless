@@ -104,7 +104,7 @@ Okay, now we'll create the model to be optimized by wrapping the cost function a
 mse_cost=costs.Model(cost=MSE, data=data)
 ```
 
-We'll fit this using the standard SPSA gradient descent algorithm described [here](https://www.jhuapl.edu/SPSA/PDF-SPSA/Spall_An_Overview.PDF). To do this, we're going to construct an instance of the ```GradientDescent``` class, passing it the model, an initial guess, and an update rule.
+We'll fit this using the standard SPSA gradient descent algorithm described [here](https://www.jhuapl.edu/SPSA/PDF-SPSA/Spall_An_Overview.PDF). To do this, we're going to construct an instance of the GradientDescent class, passing it the model, an initial guess, and an update rule.
 
 First, we'll choose an update rule from the ```updates``` submodule, creating an instance of the ```StandardSPSA``` class.
 
