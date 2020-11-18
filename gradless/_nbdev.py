@@ -13,12 +13,17 @@ index = {"GradientDescent": "01_optimizers.ipynb",
          "ModelBase": "03_models.ipynb",
          "Model": "03_models.ipynb",
          "GradientBase": "04_gradient.ipynb",
-         "SPSAGradient": "04_gradient.ipynb"}
+         "SPSAGradient": "04_gradient.ipynb",
+         "log1mexp": "06_math.ipynb",
+         "logexpit": "06_math.ipynb",
+         "arcsinh_transform": "06_math.ipynb",
+         "log_transform": "06_math.ipynb"}
 
 modules = ["optimizers.py",
            "updates.py",
            "costs.py",
-           "gradient.py"]
+           "gradient.py",
+           "math.py"]
 
 doc_url = "https://LaptopBiologist.github.io/gradless/"
 

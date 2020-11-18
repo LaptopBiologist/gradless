@@ -10,15 +10,16 @@ from .gradient import SPSAGradient
 
 # Cell
 class GradientDescent():
-    def __init__(self,x_0, cost, update, gradient=SPSAGradient(), acceptance_rule=None,
+    def __init__(self,x_0, model, update, gradient=None, acceptance_rule=None,
                  param_stepsize=1, param_stepdecay=.4, param_decay_offset=0,
                  grad_stepsize=1, grad_stepdecay=.2,
                 seed=None):
         if seed is not None:
             assert type(seed) is int
             numpy.random.seed(seed)
-        self.cost=cost
+        self.cost=model
         self.update=update
+        if gradient is None: gradient=SPSAGradient()
         self.gradient=gradient
 
         #if the gradient was passed without cost being defined, set the cost

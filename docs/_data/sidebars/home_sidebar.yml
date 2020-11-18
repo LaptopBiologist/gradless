@@ -10,23 +10,26 @@ entries:
       title: Overview
       url: /
     - output: web,pdf
-      title: gradless
+      title: core - Nothing here right now
       url: core.html
     - output: web,pdf
-      title: optimizers
+      title: optimizers - The GradientDescent implementation
       url: optimizers.html
     - output: web,pdf
-      title: 'updates: Strategies for updating parameters'
+      title: updates - Strategies for updating parameters
       url: updates.html
     - output: web,pdf
-      title: 'Models: Wrapping objective functions and data '
+      title: 'costs - Wrapping objective functions and data '
       url: models.html
     - output: web,pdf
-      title: 'gradient: Approximating the gradient'
+      title: gradient - Approximating the gradient
       url: gradient.html
     - output: web,pdf
-      title: Title
-      url: testdata.html
+      title: diagnostics - Exploring and evaluating models
+      url: diagnostics.html
+    - output: web,pdf
+      title: math - Utility functions for calculations
+      url: math.html
     output: web
     title: gradless
   output: web

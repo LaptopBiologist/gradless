@@ -1,6 +1,6 @@
 ---
 
-title: Models: Wrapping objective functions and data 
+title: costs - Wrapping objective functions and data 
 
 
 keywords: fastai
@@ -31,6 +31,8 @@ nb_path: "03_models.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>A collection of classes and functions to structuring models to be optimized.</p>
+<hr>
 <p>The <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> optimizer expects the cost function to be stored within a class with an <code>evaluate()</code> method, which takes a 1D numpy array of parameter values and returns a float. A generic class <code>[`Model`](/gradless/models.html#Model)</code> is provided to organize user-defined cost functions and data so they can be easily passed to the optimizer.</p>
 <p>Should this class prove insufficient in some circumstances, a description of the API expected by <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> along with an abstract base class is provided.</p>
 
@@ -419,13 +421,6 @@ mse_cost.update_rvs = False
 </div>
     {% endraw %}
 
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Transformations-of-cost-functions">Transformations of cost functions<a class="anchor-link" href="#Transformations-of-cost-functions"> </a></h2><p>Sometimes a cost function may vary over a wide range of magnitudes, meaning that step sizes which work well early on, lead to very slow updates once the</p>
-
-</div>
-</div>
-</div>
 </div>
  
 

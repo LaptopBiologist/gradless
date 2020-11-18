@@ -1,11 +1,12 @@
 {
   "gradless": {
     "Overview": "/",
-    "gradless": "core.html",
-    "optimizers": "optimizers.html",
-    "updates: Strategies for updating parameters": "updates.html",
-    "Models: Wrapping objective functions and data ": "models.html",
-    "gradient: Approximating the gradient": "gradient.html",
-    "Title": "testdata.html"
+    "core - Nothing here right now": "core.html",
+    "optimizers - The GradientDescent implementation": "optimizers.html",
+    "updates - Strategies for updating parameters": "updates.html",
+    "costs - Wrapping objective functions and data ": "models.html",
+    "gradient - Approximating the gradient": "gradient.html",
+    "diagnostics - Exploring and evaluating models": "diagnostics.html",
+    "math - Utility functions for calculations": "math.html"
   }
 }

@@ -1,6 +1,6 @@
 ---
 
-title: optimizers
+title: optimizers - The GradientDescent implementation
 
 
 keywords: fastai
@@ -29,6 +29,14 @@ nb_path: "01_optimizers.ipynb"
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The class used to perform gradient descent.</p>
+<hr>
+
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -47,7 +55,7 @@ nb_path: "01_optimizers.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="GradientDescent" class="doc_header"><code>class</code> <code>GradientDescent</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/optimizers.py#L12" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>GradientDescent</code>(<strong><code>x_0</code></strong>, <strong><code>cost</code></strong>, <strong><code>update</code></strong>, <strong><code>gradient</code></strong>=<em><code>&lt;gradless.gradient.SPSAGradient object at 0x7fdbca3c8e80&gt;</code></em>, <strong><code>acceptance_rule</code></strong>=<em><code>None</code></em>, <strong><code>param_stepsize</code></strong>=<em><code>1</code></em>, <strong><code>param_stepdecay</code></strong>=<em><code>0.4</code></em>, <strong><code>param_decay_offset</code></strong>=<em><code>0</code></em>, <strong><code>grad_stepsize</code></strong>=<em><code>1</code></em>, <strong><code>grad_stepdecay</code></strong>=<em><code>0.2</code></em>, <strong><code>seed</code></strong>=<em><code>None</code></em>)</p>
+<h2 id="GradientDescent" class="doc_header"><code>class</code> <code>GradientDescent</code><a href="https://github.com/LaptopBiologist/gradless/tree/master/gradless/optimizers.py#L12" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>GradientDescent</code>(<strong><code>x_0</code></strong>, <strong><code>model</code></strong>, <strong><code>update</code></strong>, <strong><code>gradient</code></strong>=<em><code>None</code></em>, <strong><code>acceptance_rule</code></strong>=<em><code>None</code></em>, <strong><code>param_stepsize</code></strong>=<em><code>1</code></em>, <strong><code>param_stepdecay</code></strong>=<em><code>0.4</code></em>, <strong><code>param_decay_offset</code></strong>=<em><code>0</code></em>, <strong><code>grad_stepsize</code></strong>=<em><code>1</code></em>, <strong><code>grad_stepdecay</code></strong>=<em><code>0.2</code></em>, <strong><code>seed</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 
 </div>
@@ -99,46 +107,43 @@ nb_path: "01_optimizers.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Parameter-initialization">Parameter initialization<a class="anchor-link" href="#Parameter-initialization"> </a></h3><p>There are two main sets of parameters that need to be chosen: parameters determining the size of the update step and parameters determining the size the of the step used to estimate the gradient.</p>
-<p>It would be useful to have some functions for choosing these.</p>
+<p>The general class used to perform gradient descent is <code>optimizers.GradientDescent</code> which is modelled after the default implementation of Spall's SPSA optimization scheme outlined <a href="https://www.jhuapl.edu/SPSA/PDF-SPSA/Spall_An_Overview.PDF">here</a>. However, this can be modified by choosing different update rules to embed the SPSA gradient estimate inside more efficient gradient descent algorithms, such as ADAM and ADAGRAD.</p>
+<h3 id="Usage">Usage<a class="anchor-link" href="#Usage"> </a></h3><p>The <code>[`GradientDescent`](/gradless/optimizers.html#GradientDescent)</code> class has two general classes of arguments:</p>
+<ol>
+<li><p>Arguments that determine how model parameters are updated (cost, update, gradient)</p>
+<ul>
+<li><p>x_0 (required): An initial guess of the model parameters where the optimizer will begin</p>
+</li>
+<li><p>model (required): The model to be optimized. Generally this should be an instance of the <code>costs.Model</code> class.</p>
+</li>
+<li><p>update (required): This should be a class that proposes a parameter update based on the gradient. See <code>[`updates`](/gradless/updates.html)</code> for details</p>
+</li>
+<li><p>gradient : This should be an instance of a class that provides an estimate of the gradient. By default, uses <code>gradient.SPSAGradient</code>. See <code>[`gradient`](/gradless/gradient.html)</code> for more details</p>
+</li>
+<li><p>acceptance_rule (optional): An AcceptanceRule class may be passed here to define rules for accepting or rejecting parameter updates. See <code>[`updates`](/gradless/updates.html)</code> for details</p>
+</li>
+</ul>
+</li>
+<li><p>Arguments related to how steps are performed (i.e. learning rate) and the gradient is approximated</p>
+</li>
+</ol>
+<p>The following parameters are required and relate to how the parameters are updated</p>
+<ul>
+<li>param_stepsize</li>
+<li>param_stepdecay</li>
+<li>param_decay_offset</li>
+</ul>
+<p>The learning rate at iteration <code>t</code> is calculated as</p>
+<p><code>learning_rate = param_stepsize / (param_decay_offset + t) ** param_stepdecay</code></p>
+<p>A constant</p>
+<p>The following parameters are required and relate to how the parameters are perturbed during the gradient approximation:</p>
+<ul>
+<li>grad_stepsize</li>
+<li>grad_stepdecay</li>
+</ul>
+<p>The perturbation step at iteration <code>t</code> is calculated as</p>
+<p><code>C_t = grad_stepsize / ( t ** grad_stepdecay )</code></p>
 
-</div>
-</div>
-</div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">initialize_param_step</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="n">gradient_reps</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-    <span class="n">opt</span><span class="o">.</span><span class="n">t</span><span class="o">+=</span><span class="mf">1.</span>
-    <span class="n">c_k</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">grad_step</span><span class="p">()</span>
-    <span class="c1">### get the gradient</span>
-    <span class="n">ghat</span><span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">gradient</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">cost</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">c_k</span><span class="p">,</span> <span class="n">gradient_reps</span><span class="o">=</span><span class="n">gradient_reps</span><span class="p">,</span> <span class="n">update_rvs</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span>
-
-    <span class="c1">### determine the proposed step</span>
-    <span class="n">a_k</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">param_step</span><span class="p">()</span>
-    <span class="n">step</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">ghat</span><span class="p">,</span> <span class="n">a_k</span> <span class="p">,</span><span class="n">opt</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
-    <span class="n">current_cost</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">cost</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
-        <span class="n">test_theta</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">theta</span><span class="o">-</span><span class="n">step</span><span class="o">/</span><span class="mf">2.</span><span class="o">**</span><span class="n">k</span>
-        <span class="n">test_cost</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">cost</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">test_theta</span><span class="p">)</span>
-        
-    <span class="k">return</span> <span class="n">a_k</span><span class="o">/</span><span class="mf">2.</span><span class="o">**</span><span class="n">k</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Adapting-initial-parameters">Adapting initial parameters<a class="anchor-link" href="#Adapting-initial-parameters"> </a></h3>
 </div>
 </div>
 </div>
