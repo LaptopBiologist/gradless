@@ -105,7 +105,7 @@ $$ Y_i \sim simulator(X_i ; \theta)$$
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Because $Y$ lives between zero and one, we might frame trying to predict the observed $Y$ based on the dependent variables $X$ as a beta regression model. We could treat the simulator as a (probably non-linear) function which transforms each $X_i$ and $\theta$ into a prediction of $Y_i$ (the mode of the beta distribution). Finally, we'll express the noisiness in these prediction of $Y_i$ with a concentration parameter $k$. We might write this model out as</p>
+<p>Because $Y$ lives between zero and one, we might frame trying to predict the observed $Y$ based on the dependent variables $X$ as a beta regression model. We could treat the simulator as a (probably non-linear) function which transforms each $X_i$ and $\theta$ into a prediction of $Y_i$ (the mode of the beta distribution). Finally, we'll express the noisiness in these predictions of $Y_i$ with a concentration parameter $k$. We might write this model out as</p>
 <p>{% raw %}
 $$\theta \sim Normal(0,2)$$
 {% endraw %}
@@ -336,7 +336,7 @@ $$Y_i \sim beta(\alpha_i, \beta_i)$$
 <p>One thing that is interesting to note is that the noise in the objective function increases as the parameters are optimized (note that width of the line in the top plot increases as the the iterations progress).</p>
 <p>This corresponds to an increase in the concentration parameter ($k$, bottom plot), which is inversely related to how well the model thinks the simulator describes the observed data. This makes sense, as when $k$ is small the model assumes that the simulator is a poor description of the observed data and so randomness in the simulation outputs has little impact on the likelihood.</p>
 <p>So initially, when the simulation parameters are poor descriptions of the data, the optimizer drive $k$ toward its minimum allowed value. As the optimizer begins to identify more reasonable parameters, the simulations become better descriptions of the data, and the optimizer begins to increase $k$ to reflect this. However, as $k$ increases, the model treats the simulations as better descriptions of the observed data, and so randomness in the simulation outputs now have a noticeable impact on the likelihood.</p>
-<p>Let's zoom in how the objective function and the concentration parameters were evolving over the last 50,000 iterations</p>
+<p>Let's zoom in on how the objective function and the concentration parameters were evolving over the last 50,000 iterations</p>
 
 </div>
 </div>
@@ -401,7 +401,7 @@ $$Y_i \sim beta(\alpha_i, \beta_i)$$
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>So, after optimization we have clearly obtained a pretty reasonable set of parameters for the observed data. That is, when fed into the simulator, the inferred parameters generate data that looks very similar to the observed data. Whether this is a good enough estimate is a question for further consideration and potentially more analysis.</p>
-<p>In this case, because I simulated the data myself, I know the the true parameter values and can the check the results against that. Most (~95) of the parameters have been correctly estimated, however five parameters appear to have been underestimated. This could reflect that the optimizer has not yet converged and more iterations should be performed (or the learning rate should be adjusted to hopefully achieve faster convergence). I think that both the concentration parameter and the objective look to be moving a clear trend support this interpretation.</p>
+<p>In this case, because I simulated the data myself, I know the the true parameter values and can the check the results against that. Most (~95) of the parameters have been correctly estimated, however five parameters appear to have been underestimated. This could reflect that the optimizer has not yet converged and more iterations should be performed (or the learning rate should be adjusted to hopefully achieve faster convergence). As noted above, both the concentration parameter and the objective function appear to be still evolving over the most recent iterations, suggesting the optimizer hadn't converged.</p>
 <p>Another possibility, though, is that some of the simulators parameters are not strongly informed by the data. Running multiple optimizers from different initial values could help evaluate whether the model has converged. Similarly, expanding from point estimation to also trying to the estimate the uncertainty about parameters (for example, with variational inference) might help better evaluate whether some parameters are simply hard to estimate.</p>
 
 </div>
