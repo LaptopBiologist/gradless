@@ -8,6 +8,7 @@
     "gradient - Approximating the gradient": "gradient.html",
     "diagnostics - Exploring and evaluating models": "diagnostics.html",
     "math - Utility functions for calculations": "math.html",
+    "testing ": "testing.html",
     "Example - Fitting a 100-dimensional Gaussian": "examples_1.html",
     "Example - A high-dimensional model with a noisy objective function": "examples_2.html"
   }

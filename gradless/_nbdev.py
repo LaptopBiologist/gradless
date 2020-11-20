@@ -23,7 +23,8 @@ modules = ["optimizers.py",
            "updates.py",
            "costs.py",
            "gradient.py",
-           "math.py"]
+           "math.py",
+           "testing.py"]
 
 doc_url = "https://LaptopBiologist.github.io/gradless/"
 

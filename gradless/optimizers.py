@@ -17,7 +17,18 @@ class GradientDescent():
         if seed is not None:
             assert type(seed) is int
             numpy.random.seed(seed)
+        # store the model
         self.cost=model
+
+        # Call the model once to ensure evaluate returns a float
+
+#         test_val=self.cost.evaluate(x_0)
+#         print (isinstance(test_val,float))
+        try:
+            numpy.isnan(self.cost.evaluate(x_0))
+        except: raise(AssertionError("The cost function must return a float or an array with shape (1,) (e.g. not an array)"))
+#         assert isinstance(test_val,float) or test_val.shape==(1), "The cost function must return a float or an array with shape (1,) (e.g. not an array)"
+
         self.update=update
         if gradient is None: gradient=SPSAGradient()
         self.gradient=gradient
@@ -32,7 +43,7 @@ class GradientDescent():
         self.grad_stepsize=grad_stepsize
         self.grad_stepdecay=grad_stepdecay
         self.t=0.
-        self.cost_history=[cost.evaluate(x_0)]
+        self.cost_history=[self.cost.evaluate(x_0)]
 
         self.theta_hist=[x_0]
         self.theta=x_0

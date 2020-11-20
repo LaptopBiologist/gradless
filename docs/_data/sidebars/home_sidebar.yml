@@ -31,6 +31,9 @@ entries:
       title: math - Utility functions for calculations
       url: math.html
     - output: web,pdf
+      title: 'testing '
+      url: testing.html
+    - output: web,pdf
       title: Example - Fitting a 100-dimensional Gaussian
       url: examples_1.html
     - output: web,pdf

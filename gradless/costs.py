@@ -51,6 +51,7 @@ class Model(ModelBase):
         self.RV=RV
         if self.RV is not None:
             self.z=self.sample_rvs()
+        else: self.z=None
 
         if RV is None:
             self.update_rvs=False
@@ -58,8 +59,10 @@ class Model(ModelBase):
             assert type(update_rvs) is bool
             self.update_rvs=update_rvs
     def evaluate(self, theta):
-        if self.data is None:
+        if self.data is None and self.RV is None:
             return self.cost(theta)
+        if self.data is None and self.RV is not None:
+            return self.cost(theta, self.z)
         if self.RV is None:
             return self.cost(theta, self.data)
         else:

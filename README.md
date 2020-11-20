@@ -2,6 +2,10 @@
 
 
 
+```python
+#all_slow
+```
+
 This is an implementation of gradient descent designed to work without access to the exact gradient. To deal with this problem, it uses James Spall's [simultaneous perturbation stochastic approximation (SPSA)](https://www.jhuapl.edu/SPSA/PDF-SPSA/Spall_An_Overview.PDF) to replace the missing gradient. 
 
 SPSA is particularly useful for optimization problems where the objective function itself is noisy, such that the exact gradient cannot be evaluated. For example, if the model at hand is evaluated by simulations rather than exact computations. This is in contrast to more typical applications of stochastic gradient descent, where the gradient can be computed, but noise is introduced through subsampling of the data (e.g. minibatching) or by Monte Carlo integration (e.g. in variational inference). 
@@ -80,7 +84,7 @@ pyplot.xlabel('x')
 
 
 
-![png](docs/images/output_4_1.png)
+![png](docs/images/output_5_1.png)
 
 
 Let's organized this data as a dictionary
@@ -123,7 +127,7 @@ Now we'll create an instance of the `GradientDescent` optimizer. `GradientDescen
 ```python
 starts=numpy.array([-9,-9]) #Here's our initial guess
 opt_vanilla=optimizers.GradientDescent(x_0 = starts,
-                                       cost = mse_cost,
+                                       model = mse_cost,
                                        update = update_rule,
                                        gradient=gradient.SPSAGradient(numpy.array([0,0])),
                                        param_stepsize=.1, param_stepdecay=0.5, param_decay_offset=0, 
@@ -178,7 +182,7 @@ We can access the parameter values at the current iteration in the ```GradientDe
 
 
 
-![png](docs/images/output_23_1.png)
+![png](docs/images/output_24_1.png)
 
 
 ADAM follows smoother path to the true parameter value (white X), but both arrive there despite relying on an approximation of the gradient.
@@ -203,7 +207,7 @@ pyplot.legend()
 
 
 
-![png](docs/images/output_25_1.png)
+![png](docs/images/output_26_1.png)
 
 
 In this case, the standard SPSA update appears to converge more rapidly, though this may not be a perfectly fair comparison in terms of step sizes.
