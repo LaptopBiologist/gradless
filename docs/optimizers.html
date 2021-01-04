@@ -117,51 +117,6 @@ nb_path: "01_optimizers.ipynb"
 </div>
 </div>
 </div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">from</span> <span class="nn">gradless</span> <span class="kn">import</span> <span class="n">optimizers</span><span class="p">,</span> <span class="n">costs</span><span class="p">,</span> <span class="n">gradient</span><span class="p">,</span> <span class="n">updates</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span>
-<span class="kn">import</span> <span class="nn">hypothesis</span>
-<span class="kn">from</span> <span class="nn">hypothesis</span> <span class="kn">import</span> <span class="n">given</span>
-<span class="kn">import</span> <span class="nn">hypothesis.strategies</span> <span class="k">as</span> <span class="nn">st</span>
-<span class="kn">import</span> <span class="nn">hypothesis.extra.numpy</span> <span class="k">as</span> <span class="nn">hypo_numpy</span>
-<span class="kn">from</span> <span class="nn">hypothesis</span> <span class="kn">import</span> <span class="n">note</span>
-<span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="kn">import</span> <span class="o">*</span>
-
-
-<span class="k">def</span> <span class="nf">test_GradientDescent_initialization</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Tests to ensure GradientDescent objects are independent</span>
-<span class="sd">    by initializing multiple GradientDescent objects with different numbers of parameters &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">quadratic</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">((</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
- 
-    <span class="n">true_value</span><span class="o">=</span><span class="mi">0</span>
-    <span class="k">for</span> <span class="n">param_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">):</span>
-        <span class="n">start_value</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">50</span><span class="p">]</span><span class="o">*</span><span class="n">param_num</span><span class="p">)</span>
-        <span class="n">model</span><span class="o">=</span><span class="n">costs</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">quadratic</span><span class="p">)</span>
-        <span class="n">update_rule</span><span class="o">=</span><span class="n">updates</span><span class="o">.</span><span class="n">StandardSPSA</span><span class="p">(</span><span class="n">max_step</span><span class="o">=.</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">opt</span><span class="o">=</span><span class="n">GradientDescent</span><span class="p">(</span><span class="n">start_value</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span><span class="n">update_rule</span><span class="p">,</span>
-                                   <span class="n">param_stepsize</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">param_stepdecay</span> <span class="o">=</span> <span class="o">.</span><span class="mi">4</span><span class="p">,</span> <span class="n">param_decay_offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
-                                   <span class="n">grad_stepsize</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">grad_stepdecay</span> <span class="o">=</span> <span class="o">.</span><span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">2</span> <span class="p">)</span>
-        <span class="c1">#perform two updates to make sure all function calls work</span>
-        <span class="n">opt</span><span class="o">.</span><span class="n">update_params</span><span class="p">()</span>
-        <span class="n">opt</span><span class="o">.</span><span class="n">update_params</span><span class="p">()</span>
-<span class="n">test_GradientDescent_initialization</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>I want to make sure the optimizer still converges after whatever updates I've made. I'll find the minimum of a quadratic function $f(x)=\sum_i x_i^2$ for both one and two parameters models. I'll run it for 1000 iterations each time.</p>
